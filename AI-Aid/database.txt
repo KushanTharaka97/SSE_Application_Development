@@ -1,0 +1,78 @@
+-- ==========================================================
+-- GovTech GSRP Backend Assessment - MySQL Database Schema
+-- ==========================================================
+
+-- 1. Create Database
+CREATE DATABASE IF NOT EXISTS gsrp_db;
+USE gsrp_db;
+
+-- 2. Citizens Table
+-- Stores basic citizen details (User Story 1.1)
+CREATE TABLE IF NOT EXISTS citizens (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    nic VARCHAR(20) NOT NULL UNIQUE,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    mobile VARCHAR(15) NOT NULL,
+    address VARCHAR(255) NOT NULL,
+    status VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+-- 3. Service Requests Table
+-- Manages digital government service requests (User Story 2.1)
+CREATE TABLE IF NOT EXISTS service_requests (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    citizen_id BIGINT NOT NULL,
+    service_type VARCHAR(100) NOT NULL,
+    description TEXT,
+    status VARCHAR(50) NOT NULL, -- SUBMITTED, IN_REVIEW, APPROVED, REJECTED
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_request_citizen FOREIGN KEY (citizen_id) 
+        REFERENCES citizens(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- 4. Supporting Documents Table
+-- Metadata for documents related to service requests (User Story 3.1)
+CREATE TABLE IF NOT EXISTS supporting_documents (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    request_id BIGINT NOT NULL,
+    document_type VARCHAR(100) NOT NULL,
+    document_name VARCHAR(255) NOT NULL,
+    document_reference VARCHAR(255) NOT NULL,
+    verification_status VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_document_request FOREIGN KEY (request_id) 
+        REFERENCES service_requests(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- 5. Notifications Table
+-- Tracks status update communications to citizens (User Story 4.1)
+CREATE TABLE IF NOT EXISTS notifications (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    citizen_id BIGINT NOT NULL,
+    request_id BIGINT NOT NULL,
+    message TEXT NOT NULL,
+    status VARCHAR(20) NOT NULL, -- UNREAD, READ
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_notification_citizen FOREIGN KEY (citizen_id) 
+        REFERENCES citizens(id) ON DELETE CASCADE,
+    CONSTRAINT fk_notification_request FOREIGN KEY (request_id) 
+        REFERENCES service_requests(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ==========================================================
+-- Helpful Administration Queries
+-- ==========================================================
+
+-- Check all tables
+-- SHOW TABLES;
+
+-- Search for a citizen by NIC
+-- SELECT * FROM citizens WHERE nic = '123456789V';
+
+-- List requests for a specific citizen
+-- SELECT sr.* FROM service_requests sr 
+-- JOIN citizens c ON sr.citizen_id = c.id 
+-- WHERE c.nic = '123456789V';

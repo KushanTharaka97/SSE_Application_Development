@@ -1,0 +1,8 @@
+ Key Improvements
+   1. Separation of Concerns: The AuthController now only handles HTTP concerns (routing, validation, responses), while AuthAppService manages the
+      business logic and security context.
+   2. Traceability: Every major action (login attempts, successful registrations, profile fetches) is now logged with relevant metadata (usernames,
+      email, roles), which is crucial for production monitoring.
+   3. Transactional Integrity: Added @Transactional to the registration logic to ensure database consistency.
+   4. Error Handling: The service layer now uses BusinessException for controlled failure scenarios, allowing the GlobalExceptionHandler to provide
+      consistent error responses.
