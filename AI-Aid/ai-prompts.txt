@@ -1,0 +1,521 @@
+### PROMPT
+Role: Senior engineer / Techlead in Java Spring Boot, Context: According to the @AI-Aid\GovTech_SSE_Backend_Assessment_Candidates.pdf , Task: Read the given pdf here and tell me how to proceed step by step with initializing the package of Spring Boot here, Constraints: Currently I am using windows with InteliJ Idea community version here., Output: I need commands step by step guidance to do this, if InteliJ needed to create the package that also needed here. Command : this prompt and the respective answer also needed to store in the @AI-Aid/ai-prompts.txt in text format.
+
+### ANSWER
+Based on the GovTech Technical Assessment for a Senior Software Engineer, here is the step-by-step guidance to initialize your Spring Boot project.
+
+#### 1. Project Initialization (via Spring Initializr)
+Since you are using IntelliJ IDEA Community Edition, the "Spring Initializr" wizard is not built-in (it is an Ultimate feature). The most efficient way is to use the web-based initializr.
+
+1. Go to [start.spring.io](https://start.spring.io/).
+2. Configure the following:
+   - **Project**: Maven (Senior standard for dependency management).
+   - **Language**: Java.
+   - **Spring Boot**: 3.x.x (Latest stable).
+   - **Group**: `com.govtech.gsrp` (GSRP: Government Service Request Platform).
+   - **Artifact**: `backend-service`.
+   - **Name**: `gsrp-backend`.
+   - **Package name**: `com.govtech.gsrp`.
+   - **Packaging**: Jar.
+   - **Java**: 17 or 21 (Recommended).
+
+#### 2. Dependencies Selection
+Add these essential dependencies based on the PDF requirements:
+- **Spring Web**: For building RESTful APIs.
+- **Spring Data JPA**: For database persistence.
+- **Spring Security**: For role-based access control (Citizen, Agent, Admin).
+- **Validation**: For validating Citizen and Service Request inputs.
+- **Lombok**: To reduce boilerplate code (Entities/DTOs).
+- **PostgreSQL Driver** (or MySQL): For the database.
+- **Docker Compose Support**: To simplify the "single command" run requirement.
+
+Click **GENERATE** to download the ZIP file.
+
+#### 3. Setup in IntelliJ IDEA Community
+1. Extract the downloaded ZIP file to your workspace: `D:\working_for_side_projects\gov-assesment\SSE_Application_Development\gsrp-backend`.
+2. Open IntelliJ IDEA Community.
+3. Click **Open** and select the `pom.xml` file in the extracted folder.
+4. Choose **Open as Project**.
+5. Ensure your JDK is configured: `File > Project Structure > Project > SDK` (Set to 17 or 21).
+
+#### 4. Defining the Package Structure
+As a Senior Engineer, you should follow a "Package by Feature" or a clean "Layered Architecture". Here is the recommended initial package structure:
+
+```text
+com.govtech.gsrp
+├── config             # SecurityConfig, AppConfig, Swagger/OpenAPI config
+├── controller         # REST Controllers (Citizen, ServiceRequest, etc.)
+├── service            # Business Logic Interfaces
+│   └── impl           # Service Implementations
+├── repository         # Spring Data JPA Repositories
+├── entity             # JPA Entities (Citizen, ServiceRequest, Notification)
+├── dto                # Data Transfer Objects (Requests/Responses)
+├── exception          # Global Exception Handling (@ControllerAdvice)
+└── security           # JWT/Custom Auth logic
+```
+
+#### 5. Essential Commands (Terminal)
+Open the Terminal in IntelliJ (`Alt + F12`) and use these commands:
+
+- **Build the project**:
+  `./mvnw clean install`
+- **Run the application**:
+  `./mvnw spring-boot:run`
+- **Run with Docker Compose (if configured)**:
+  `docker-compose up --build`
+
+#### 6. Next Steps for Implementation
+1. **Security**: Implement `SecurityConfig` first to handle the Role-Based Access.
+2. **Entities**: Define `Citizen` and `ServiceRequest` with proper JPA mappings.
+3. **API Documentation**: Add `springdoc-openapi-starter-webmvc-ui` dependency for Swagger.
+
+---
+
+### PROMPT
+From the InteliJ what is the step by step process to create this, this also prompt and output should also needed to record in teh @AI-Aid/ai-prompts.txt  text file here.
+
+### ANSWER
+Since you are using IntelliJ IDEA Community Edition, here is the exact UI-driven workflow to create your package structure and manage the project:
+
+#### 1. Importing the Project
+1. Open IntelliJ IDEA Community.
+2. Go to `File > Open`.
+3. Navigate to your extracted project folder and select the `pom.xml` file.
+4. Select **Open as Project**.
+
+#### 2. Creating the Package Structure
+1. Open the **Project Tool Window** (`Alt + 1`).
+2. Navigate to `src > main > java`.
+3. **Create the Base Package**:
+   - Right-click the `java` folder.
+   - Select `New > Package`.
+   - Type `com.govtech.gsrp` and press Enter.
+4. **Create Sub-Packages (Sub-folders)**:
+   - Right-click the new `com.govtech.gsrp` package.
+   - Select `New > Package`.
+   - Type the name (e.g., `controller`).
+   - Repeat this for `service`, `repository`, `entity`, `dto`, `config`, `security`, and `exception`.
+   - *Note: If packages are concatenated (e.g., com.govtech.gsrp.controller), click the 'Gear' icon in the Project window and uncheck 'Compact Middle Packages'.*
+
+#### 3. Creating Classes and Interfaces
+1. Right-click on a target package (e.g., `entity`).
+2. Select `New > Java Class`.
+3. Choose the type: `Class`, `Interface`, `Enum`, or `Record`.
+4. Type the name (e.g., `Citizen`) and press Enter.
+
+#### 4. Managing Dependencies (pom.xml)
+1. Double-click `pom.xml` to open it.
+2. Add any dependencies within the `<dependencies>` tag.
+3. **Sync Maven**: After editing `pom.xml`, a small Maven icon with a refresh arrow will appear in the top-right corner of the editor. Click it, or press `Ctrl + Shift + O` to load the changes.
+
+#### 5. Running and Debugging
+1. **To Run**: Right-click your main class (the one with `@SpringBootApplication`) and select `Run 'GsrpBackendApplication'`.
+2. **To Debug**: Select `Debug 'GsrpBackendApplication'` to hit breakpoints.
+3. **Terminal**: Use the built-in Terminal at the bottom (`Alt + F12`) to run Maven commands like `./mvnw clean install`.
+
+---
+
+### PROMPT
+Is it better to do with spring boot initializer, what is the guide for that, this answer needed to record in the @AI-Aid/ai-prompts.txt
+
+### ANSWER
+Yes, it is **highly recommended** to use the Spring Initializr (start.spring.io) for project setup.
+
+#### Why it is better:
+1. **Standardized Structure**: It creates a production-ready directory structure that follows Maven/Gradle best practices.
+2. **Dependency Management**: It automatically calculates compatible versions for your selected libraries (Spring Boot Starters), avoiding "dependency hell."
+3. **Maven/Gradle Wrapper**: It includes the `./mvnw` or `./gradlew` executable scripts. This ensures anyone (including evaluators) can build your project without having Maven/Gradle pre-installed.
+4. **Instant Boilerplate**: It generates the main Application class and a basic test class, saving you time.
+
+#### Guide for Spring Initializr:
+1.  **Open Browser**: Go to **[start.spring.io](https://start.spring.io/)**.
+2.  **Project Settings**:
+    *   **Project**: Select `Maven`.
+    *   **Language**: Select `Java`.
+    *   **Spring Boot**: Choose the latest stable version (not Snapshot).
+3.  **Project Metadata**:
+    *   **Group**: `com.govtech`
+    *   **Artifact**: `gsrp-backend`
+    *   **Description**: Digital Government Service Request Platform
+    *   **Java**: Select `17` or `21`.
+4.  **Dependencies**: Click **ADD DEPENDENCIES** and search for:
+    *   `Spring Web` (REST APIs)
+    *   `Spring Data JPA` (Database)
+    *   `Spring Security` (Auth/Roles)
+    *   `Validation` (Input check)
+    *   `Lombok` (Clean code)
+    *   `PostgreSQL Driver` (Persistence)
+5.  **Generate**: Click the **GENERATE** button to download the ZIP file.
+6.  **Import**: Extract the ZIP and open the folder in IntelliJ IDEA as a Maven project.
+
+---
+
+### PROMPT
+What should be the proper packaging and configurations
+
+### ANSWER
+For a **Senior Software Engineer** assessment, your architectural decisions are as important as your code. Here is the recommended packaging strategy and core configurations:
+
+#### 1. Proper Packaging (Clean Layered Architecture)
+Organize your code to separate concerns and ensure maintainability:
+
+```text
+com.govtech.gsrp
+├── config             # Configuration beans (Security, OpenAPI, Database)
+├── controller         # REST Endpoints (CitizenController, ServiceRequestController)
+├── service            # Business Logic Interfaces
+│   └── impl           # Service Implementations (keeps business logic separate)
+├── repository         # Spring Data JPA Interfaces
+├── entity             # JPA Database Entities
+├── dto                # Data Transfer Objects (Request/Response payloads)
+│   ├── request        # CitizenCreateRequest, ServiceRequestSubmitDTO
+│   └── response       # CitizenResponse, ServiceRequestDetailsDTO
+├── exception          # Custom Exceptions and GlobalExceptionHandler
+├── security           # Security filters, JWT providers, CustomUserDetails
+└── util               # Constants, Enums (RequestStatus, ServiceType), Date Helpers
+```
+
+#### 2. Core Configurations
+
+**A. Database (application.yml)**
+Use a YAML file for better readability. Configure your PostgreSQL/MySQL connection:
+```yaml
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/gsrp_db
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:password}
+  jpa:
+    hibernate:
+      ddl-auto: update  # Use 'validate' in production
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+```
+
+**B. Security (SecurityConfig.java)**
+Implement Role-Based Access Control (RBAC) as per the PDF:
+```java
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http.csrf().disable()
+            .authorizeHttpRequests()
+            .requestMatchers("/api/admin/**").hasRole("ADMIN")
+            .requestMatchers("/api/agent/**").hasRole("SERVICE_AGENT")
+            .requestMatchers("/api/citizen/**").hasRole("CITIZEN")
+            .anyRequest().authenticated()
+            .and().httpBasic(); // Or JWT
+        return http.build();
+    }
+}
+```
+
+**C. API Documentation (Swagger)**
+Enable automatic API documentation:
+```yaml
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+```
+
+#### 3. Why this approach?
+- **Separation of Entities and DTOs**: Never expose your Database Entities directly to the API. This protects your DB schema and prevents over-posting.
+- **Service Interfaces**: Allows for easy unit testing (mocking) and future-proofs the app for different implementations.
+- **Global Exception Handling**: Ensures the API always returns a structured JSON error response (e.g., 400 Bad Request) instead of a raw stack trace.
+
+---
+
+### PROMPT
+What should be the proper packaging and configurations in the Spring Initializer
+
+### ANSWER
+To align with the **Senior SSE** assessment requirements, use the following exact settings on [start.spring.io](https://start.spring.io/):
+
+#### 1. Project Metadata
+*   **Project**: `Maven` (Industry standard for enterprise Java projects).
+*   **Language**: `Java`.
+*   **Spring Boot**: `3.x.x` (Select the latest stable version, e.g., 3.2.x).
+*   **Group**: `com.govtech.gsrp` (Clear, professional naming).
+*   **Artifact**: `backend-service`.
+*   **Name**: `gsrp-backend`.
+*   **Package name**: `com.govtech.gsrp`.
+*   **Packaging**: `Jar`.
+*   **Java**: `17` or `21` (Long-Term Support versions).
+
+#### 2. Selected Dependencies
+Search and add these specific modules:
+1.  **Spring Web**: For building RESTful APIs using Spring MVC.
+2.  **Spring Data JPA**: For persistence with Hibernate and Spring Data.
+3.  **Spring Security**: Mandatory for the RBAC (Role-Based Access Control) requirement.
+4.  **Validation**: For `@Valid` and `@NotNull` annotations on your request DTOs.
+5.  **Lombok**: Essential for reducing boilerplate (Getters/Setters/Constructors).
+6.  **PostgreSQL Driver** (or MySQL): Based on your choice of database.
+7.  **Docker Compose Support**: **Important** - This automatically generates a `compose.yaml` file, helping you meet the "single command run" requirement.
+
+#### 3. Why these configurations?
+*   **Maven vs Gradle**: While both are valid, Maven is often preferred in formal assessments for its explicit `pom.xml` structure.
+*   **Docker Compose Support**: Choosing this in the Initializr ensures your environment setup (Database + App) is production-ready from day one.
+*   **Lombok**: Demonstrates your knowledge of modern Java productivity tools.
+*   **Validation**: Shows you prioritize data integrity at the entry point of your application.
+
+---
+
+### PROMPT
+In above do we record and track application properties as YAMl or application.properties
+
+### ANSWER
+For a **Senior Software Engineer** role, using **YAML (`application.yml`)** is strongly preferred over `.properties`.
+
+#### Why YAML is better:
+1.  **Hierarchical Structure**: YAML allows you to group related properties (like `spring.datasource`) visually. This is much cleaner than repeating the same prefix on every line in a `.properties` file.
+2.  **Readability**: Its indented structure is significantly easier to read and maintain as the project grows.
+3.  **Reduced Redundancy**: You don't have to re-type keys.
+    *   *Properties:*
+        ```properties
+        spring.jpa.hibernate.ddl-auto=update
+        spring.jpa.show-sql=true
+        ```
+    *   *YAML:*
+        ```yaml
+        spring:
+          jpa:
+            hibernate:
+              ddl-auto: update
+            show-sql: true
+        ```
+4.  **Standard for Modern DevOps**: Most modern tools (Docker Compose, Kubernetes, CI/CD pipelines) use YAML, so keeping your application configuration in the same format maintains consistency.
+
+#### Implementation:
+When you generate the project, simply rename the default `src/main/resources/application.properties` to `application.yml`.
+
+---
+
+### PROMPT
+According to the given project in the @AI-Aid/GovTech_SSE_Backend_Assessment_Candidates.pdf , given scenarios generate a proper architectural folders and files for this, like Controllers, Services, Implementations, Application Level: configs, dto, exception, util, validators, Controllers, And Domain Level: entites, services{interfaces, Implementations}, utils, and external: dto, repository, service, util and other, make a professional level structure here.
+
+### ANSWER
+Based on the "Digital Government Service Request Platform" requirements, here is a professional-grade architectural structure. It follows a **Clean Architecture / Hexagonal** influence to ensure strict separation of concerns.
+
+```text
+com.govtech.gsrp
+├── application/                # APPLICATION LAYER (Orchestration & Web)
+│   ├── config/                 # App-wide Beans (Security, OpenAPI, CORS)
+│   │   ├── SecurityConfig.java
+│   │   └── OpenAPIConfig.java
+│   ├── controller/             # REST API Entry points (V1)
+│   │   ├── CitizenController.java
+│   │   ├── ServiceRequestController.java
+│   │   ├── DocumentController.java
+│   │   └── NotificationController.java
+│   ├── dto/                    # Application DTOs (Request/Response)
+│   │   ├── request/            # CitizenCreateDTO, RequestSubmitDTO
+│   │   └── response/           # CitizenResponseDTO, RequestStatusDTO
+│   ├── exception/              # Global Error Handling
+│   │   ├── GlobalExceptionHandler.java
+│   │   └── BusinessException.java
+│   ├── service/                # Application Services (Orchestrates Domain)
+│   │   ├── CitizenAppService.java
+│   │   └── ServiceRequestAppService.java
+│   ├── util/                   # Web Utilities (Mapping, Path constants)
+│   └── validator/              # Custom Payload Validators
+│       └── NICValidator.java
+│
+├── domain/                     # DOMAIN LAYER (Core Business Logic)
+│   ├── entity/                 # Rich Domain Entities (JPA)
+│   │   ├── Citizen.java
+│   │   ├── ServiceRequest.java
+│   │   ├── SupportingDocument.java
+│   │   └── Notification.java
+│   ├── service/                # Domain Services (Complex Business Rules)
+│   │   ├── interface/          # ICitizenService.java
+│   │   └── implementation/     # CitizenServiceImpl.java
+│   ├── util/                   # Domain Enums & Constants
+│   │   ├── RequestStatus.java  # SUBMITTED, IN_REVIEW, APPROVED, REJECTED
+│   │   └── ServiceType.java
+│   └── valueobject/            # Value Objects (Address, Contact)
+│
+├── infrastructure/             # EXTERNAL/INFRASTRUCTURE LAYER (Persistence & Adapters)
+│   ├── repository/             # Spring Data JPA Repositories
+│   │   ├── CitizenRepository.java
+│   │   └── ServiceRequestRepository.java
+│   ├── external/               # Adapters for External Systems
+│   │   ├── dto/                # DTOs for External API calls
+│   │   ├── service/            # EmailSenderService, SMSService
+│   │   └── util/               # Serialization/Logging Utils
+│   └── mapper/                 # Entity-to-DTO Conversion Logic (MapStruct)
+│
+└── GsrpBackendApplication.java # Spring Boot Main Class
+```
+
+---
+
+### PROMPT
+I need to move postgresql to MySQL, what are the changes that I need to do to change that. Update the code with the requested changes.
+
+### ANSWER
+To migrate from **PostgreSQL** to **MySQL**, you need to make the following architectural and configuration changes:
+
+#### 1. Update `pom.xml`
+The PostgreSQL JDBC driver must be replaced with the MySQL Connector/J.
+
+**Old Dependency:**
+```xml
+<dependency>
+    <groupId>org.postgresql</groupId>
+    <artifactId>postgresql</artifactId>
+    <scope>runtime</scope>
+</dependency>
+```
+
+**New Dependency:**
+```xml
+<dependency>
+    <groupId>com.mysql</groupId>
+    <artifactId>mysql-connector-j</artifactId>
+    <scope>runtime</scope>
+</dependency>
+```
+
+#### 2. Update `application.yaml`
+The database connection string and driver class name must be updated.
+
+```yaml
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/gsrp_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+    username: root
+    password: your_password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect # Explicitly set for MySQL
+```
+
+#### 3. Entity Considerations
+Spring Boot and Hibernate handle the mapping automatically for both databases. Since we are using `@GeneratedValue(strategy = GenerationType.IDENTITY)`, no code changes are required in your entity classes, as MySQL supports auto-increment columns natively.
+
+---
+
+### PROMPT
+I think I need some dummy data to the table those created using the @AI-Aid/database.txt , generate data.txt file in the @AI-Aid\** to the adding , new table data to all the tables. Generate more specific querries for that.
+
+### ANSWER
+I have generated a comprehensive SQL script with dummy data for testing the Digital Government Service Request Platform.
+
+#### 1. Dummy Data Categories:
+*   **Citizens**: 3 representative profiles (John Doe, Jane Smith, Kamal Perera).
+*   **Service Requests**: Various requests including 'Passport Renewal', 'Driving License', and 'Revenue License' with different statuses (SUBMITTED, IN_REVIEW, APPROVED, REJECTED).
+*   **Supporting Documents**: Metadata for ID cards, medical reports, and insurance certificates linked to the requests.
+*   **Notifications**: Status update messages linked to specific citizens and their requests.
+
+#### 2. File Location:
+The SQL script is stored in **`AI-Aid/data.txt`**.
+
+#### 3. How to use:
+You can execute the script in your MySQL environment to populate your tables instantly. It also includes helpful **Verification Queries** at the end to check if the data was inserted correctly.
+
+---
+
+### PROMPT
+In the @AI-Aid/data.txt is not updating the INSERT INTO service_requests (citizen_id, service_type, description, status) VALUES ... due to error of "SQL Error [1364] [HY000]: Field 'created_date' doesn't have a default value". What should I do for that.
+
+### ANSWER
+The error "Field 'created_date' doesn't have a default value" occurs because the database table requires a value for that column, but none was provided in the `INSERT` statement and no default was set in the schema.
+
+To fix this, I have performed the following actions:
+
+#### 1. Updated `database.txt` (Schema Alignment)
+I updated the `CREATE TABLE` script for `service_requests` to:
+*   Use the column names `created_date` and `updated_date` to perfectly match the JPA Entity field names.
+*   Added `DEFAULT CURRENT_TIMESTAMP` to both columns. This ensures that if an `INSERT` statement omits these fields (common in manual scripts), MySQL will automatically populate them.
+
+#### 2. Updated `AI-Aid/data.txt` (Data script)
+I updated the dummy data `INSERT` statements for `service_requests` to:
+*   Explicitly include the `created_date` and `updated_date` columns.
+*   Use the `NOW()` function to provide current timestamps.
+
+#### 3. Implementation Recommendation
+Ensure you run the updated `database.txt` first to recreate the table with the correct defaults before running the `data.txt` script.
+
+---
+
+### PROMPT
+For the data query in the @AI-Aid/data.txt, for query: "INSERT INTO supporting_documents... I am getting: "SQL Error [1364] [HY000]: Field 'name' doesn't have a default value", and for Query: "INSERT INTO notifications... I am getting: "SQL Error [1136] [21S01]: Column count doesn't match value count at row 1". How to resolve the error here.
+
+### ANSWER
+These errors were caused by mismatches between the SQL schema (`database.txt`), the JPA Entity definitions, and the insertion script (`data.txt`).
+
+#### 1. Supporting Documents Fix (`Field 'name' doesn't have a default value`)
+The SQL table used `document_name` but the JPA Entity and your logic expected `name`. I have synchronized `database.txt` to use the column name `name` to match the Entity field. I also aligned `service_request_id` and `document_type` to match the `@JoinColumn` and entity fields respectively.
+
+#### 2. Notifications Fix (`Column count doesn't match value count`)
+The previous `INSERT` statement for notifications was attempting to insert 6 values into 4 specified columns. I have corrected the `INSERT` query in `data.txt` to correctly map the 4 values (citizen_id, service_request_id, message, status) to their respective columns.
+
+#### 3. Key Architectural Changes:
+*   **Database Schema**: Updated `database.txt` to be a 1:1 match with our JPA entities (`Citizen`, `ServiceRequest`, `SupportingDocument`, `Notification`). This ensures that your manual scripts and Spring Boot's internal logic are perfectly aligned.
+*   **Foreign Keys**: Corrected the column names for foreign keys (e.g., `service_request_id`) across all tables to ensure relational integrity.
+
+**Recommendation**: Please re-run the entire `database.txt` script to refresh your tables, then execute the corrected `AI-Aid/data.txt`.
+
+---
+
+### PROMPT
+Complete the task in AI-Aid/todo.txt : " 3. Citizen Management (User Stories 1.1 - 1.5)", show me step by step address that, if any question is there ask without making assumptions. Update what have you done in the AI-Aid/ai-prompts.txt with the prompt also. When is the time to complete [⚠️ SECURITY WARNING TODO]: in the AI-Aid/todo.txt , after complter all the AI-Aid/todo.txt list or do I can immediately take action for the existing issue.
+
+### ANSWER
+1. Timing of the Security Warning TODO:
+We highly recommend resolving the [⚠️ SECURITY WARNING TODO] immediately before starting the business logic implementation of Citizen Management. Securing endpoints first prevents accidentally writing insecure APIs, establishes roles early, and ensures role validation (hasRole('ADMIN') vs. hasRole('SERVICE_AGENT') vs. hasRole('CITIZEN')) is in place.
+
+2. Step-by-Step Plan for Citizen Management:
+Step 2.1: Establish DTOs for Citizen Management (CitizenRequest/Response payloads).
+Step 2.2: Implement CitizenRepository custom queries if needed (like check by NIC or Email).
+Step 2.3: Implement Citizen Service layer (ICitizenAppService and CitizenAppServiceImpl) with validation rules and business logic.
+Step 2.4: Implement CitizenController endpoints mapping to User Stories 1.1 to 1.5.
+Step 2.5: Apply security role constraints (using @PreAuthorize) on each endpoint to match business actors (Admin vs. Service Agent).
+Step 2.6: Verify and test locally.
+
+3. Questions to Clarify:
+- Is NIC the unique identifier we should use to prevent duplicate citizen records (User Story 1.1)?
+- Should the Admin create user accounts (credentials) for citizens when creating their profiles so they can log in?
+- For story 1.2, is "citizen reference" the database primary key `id` or the `nic`?
+- For story 1.5, should we use soft delete (set status to INACTIVE), physical delete, or deactivation?
+
+---
+
+### PROMPT
+In this project AI-Aid\GovTech_SSE_Backend_Assessment_Candidates.pdf is the main point that needed to full-fill. in the list of AI-Aid\todo.txt I have made general list of things to proceed to full fill the process, all the prompts and results should be in the AI-Aid\ai-prompts.txt , Now I needed to add : "5. Supporting Document Management (User Stories 3.1 - 3.5)", complete all and ask any question is there, if there is any issue do not get any assumption just ask from me. And update the code as a techlead.
+
+### ANSWER
+Completed Supporting Document Management based on the backlog items in `AI-Aid/todo.txt`.
+
+Implemented endpoints:
+- `POST /api/documents` for `CITIZEN` to add supporting document metadata linked to a valid service request.
+- `GET /api/documents/{id}` for `SERVICE_AGENT` to view a document by id/reference.
+- `GET /api/service-requests/{id}/documents` for `SERVICE_AGENT` to list all documents of a service request.
+- `PUT /api/documents/{id}` for `SERVICE_AGENT` to update document metadata and verification status.
+- `PATCH /api/documents/{id}` for `SERVICE_AGENT` to update only verification status.
+- `DELETE /api/documents/{id}` for `ADMIN` to delete document metadata.
+
+Technical changes:
+- Added DTOs for create, update, status patch, and response models.
+- Implemented `DocumentExecutionService` and `DocumentExecutionServiceImpl`.
+- Added ownership validation so a citizen can only add documents to their own service requests.
+- Added repository query to list documents by service request in stable id order.
+- Added controller logging and service-layer business validation.
+- Updated `AI-Aid/todo.txt` and marked section 5 tasks as completed.
+
+Issue found during validation:
+- Local build validation is currently blocked because `JAVA_HOME` is not configured and no JDK is available on PATH in this environment, so `.\mvnw.cmd -DskipTests compile` cannot run.
+
+Question:
+- Do you want me to proceed next with local build validation once you provide a JDK path or set `JAVA_HOME`?

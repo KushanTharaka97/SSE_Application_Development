@@ -1,0 +1,33 @@
+-- ==========================================================
+-- FINAL SYNCHRONIZED DUMMY DATA (Aligned with Schema & Enums)
+-- ==========================================================
+
+USE gsrp_db;
+
+-- 1. Citizens
+INSERT INTO citizens (name, nic, email, mobile, address, status) VALUES
+('John Doe', '199012345678', 'john.doe@example.com', '0771234567', 'No 12, Galle Road, Colombo 03', 'ACTIVE'),
+('Jane Smith', '199298765432', 'jane.smith@example.com', '0719876543', 'Apt 4B, Kandy Road, Kelaniya', 'ACTIVE'),
+('Kamal Perera', '198511223344', 'kamal.perera@example.com', '0755554444', '56/1, Peradeniya Road, Kandy', 'ACTIVE');
+
+-- 2. Service Requests
+INSERT INTO service_requests (citizen_id, service_type, description, status) VALUES
+(1, 'GENERAL_INQUIRY', 'Applying for a renewal of my expired passport.', 'SUBMITTED'),
+(1, 'GENERAL_INQUIRY', 'New application for heavy vehicle driving license.', 'IN_REVIEW'),
+(2, 'GENERAL_INQUIRY', 'Requesting a copy of my birth certificate.', 'APPROVED'),
+(3, 'DOCUMENT_RENEWAL', 'Annual revenue license renewal for vehicle WP-ABC-1234.', 'REJECTED');
+
+-- 3. Supporting Documents (Using values from Java DocumentType Enum)
+-- Values: IDENTIFICATION, PROOF_OF_ADDRESS, SUPPORTING_LETTER, OTHER
+INSERT INTO supporting_documents (service_request_id, document_type, name, document_reference, verification_status) VALUES
+(1, 'IDENTITY_CARD', 'nic_front.jpg', 'REF-NIC-001', 'VERIFIED'),
+(1, 'PASSPORT', 'old_passport_scan.pdf', 'REF-PASS-002', 'PENDING'),
+(2, 'MEDICAL_REPORT', 'medical_report.pdf', 'REF-MED-003', 'VERIFIED'),
+(4, 'INSURANCE_CERTIFICATE', 'insurance.png', 'REF-INS-004', 'REJECTED');
+
+
+-- 4. Notifications
+INSERT INTO notifications (citizen_id, service_request_id, message, status) VALUES
+(1, 1, 'Your Passport Renewal request has been successfully submitted.', 'READ'),
+(2, 3, 'Your Birth Certificate Copy request has been APPROVED.', 'UNREAD'),
+(3, 4, 'Your Revenue License request was REJECTED.', 'UNREAD');

@@ -1,0 +1,61 @@
+-- ==========================================================
+-- GovTech GSRP Backend Assessment - MySQL Database Schema
+-- ==========================================================
+
+-- 1. Create Database
+CREATE DATABASE IF NOT EXISTS gsrp_db;
+USE gsrp_db;
+
+-- 2. Citizens Table
+CREATE TABLE IF NOT EXISTS citizens (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    nic VARCHAR(20) NOT NULL UNIQUE,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    mobile VARCHAR(15) NOT NULL,
+    address VARCHAR(255) NOT NULL,
+    status VARCHAR(50) NOT NULL,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- Aligned with entity
+) ENGINE=InnoDB;
+
+-- 3. Service Requests Table
+CREATE TABLE IF NOT EXISTS service_requests (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    citizen_id BIGINT NOT NULL,
+    service_type VARCHAR(50) NOT NULL,
+    description VARCHAR(1000) NOT NULL,
+    status VARCHAR(50) NOT NULL,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_request_citizen FOREIGN KEY (citizen_id) 
+        REFERENCES citizens(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- 4. Supporting Documents Table
+-- Aligned with SupportingDocument.java Entity
+CREATE TABLE supporting_documents (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    service_request_id BIGINT NOT NULL,
+    document_type VARCHAR(50) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    document_reference VARCHAR(255) NOT NULL,
+    verification_status VARCHAR(50) NOT NULL,
+    CONSTRAINT fk_document_request FOREIGN KEY (service_request_id)
+        REFERENCES service_requests(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+
+-- 5. Notifications Table
+-- Aligned with Notification.java Entity
+CREATE TABLE IF NOT EXISTS notifications (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    citizen_id BIGINT NOT NULL,
+    service_request_id BIGINT NOT NULL, -- Match @JoinColumn
+    message VARCHAR(500) NOT NULL,      -- Match length 500
+    status VARCHAR(50) NOT NULL,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_notification_citizen FOREIGN KEY (citizen_id) 
+        REFERENCES citizens(id) ON DELETE CASCADE,
+    CONSTRAINT fk_notification_request FOREIGN KEY (service_request_id) 
+        REFERENCES service_requests(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
