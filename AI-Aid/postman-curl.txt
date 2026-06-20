@@ -1,0 +1,421 @@
+========================================================================
+GovTech GSRP - Authentication & Citizen Management API CURL Requests
+========================================================================
+
+Note: Replace <JWT_TOKEN_HERE> with the actual JWT token returned in the /api/auth/login response.
+Assume server is running on http://localhost:8080.
+
+------------------------------------------------------------------------
+1. Authentication Endpoints
+------------------------------------------------------------------------
+
+1.1. Public Registration (ignores injected roles, forces CITIZEN)
+curl -X POST http://localhost:8080/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "publicuser",
+    "email": "public@example.com",
+    "password": "password123",
+    "roles": ["ADMIN"]
+  }'
+# Expected: User created successfully, but roles will contain only "ROLE_CITIZEN".
+
+1.2. Public/Admin Login (to retrieve JWT token)
+curl -X POST http://localhost:8080/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "admin",
+    "password": "adminpassword"
+  }'
+
+1.3. Admin Registers a Service Agent (requires ADMIN role JWT)
+curl -X POST http://localhost:8080/api/auth/admin/register \
+  -H "Authorization: Bearer <JWT_TOKEN_HERE>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "agent007",
+    "email": "agent@example.com",
+    "password": "agentpassword",
+    "roles": ["SERVICE_AGENT"]
+  }'
+
+1.4. Check Current User Details (requires any valid JWT)
+curl -X GET http://localhost:8080/api/auth/me \
+  -H "Authorization: Bearer <JWT_TOKEN_HERE>"
+
+------------------------------------------------------------------------
+2. Citizen Management Endpoints
+------------------------------------------------------------------------
+
+2.1. Admin Creates a Citizen Profile (requires ADMIN role JWT)
+# This will auto-create user: username = "971234567V", default password = "971234567V"
+curl -X POST http://localhost:8080/api/citizens \
+  -H "Authorization: Bearer <JWT_TOKEN_HERE>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Kushan Tharaka",
+    "nic": "971234567V",
+    "email": "kushan@example.com",
+    "mobile": "0771234567",
+    "address": "123, Galle Road, Colombo",
+    "status": "ACTIVE"
+  }'
+
+2.2. Service Agent or Admin Views Citizen by ID (requires ADMIN or SERVICE_AGENT JWT)
+curl -X GET http://localhost:8080/api/citizens/1 \
+  -H "Authorization: Bearer <JWT_TOKEN_HERE>"
+
+2.3. Admin Lists or Searches Citizens with pagination (requires ADMIN role JWT)
+curl -X GET "http://localhost:8080/api/citizens?query=Kushan&page=0&size=10" \
+  -H "Authorization: Bearer <JWT_TOKEN_HERE>"
+
+2.4. Admin Updates Citizen Profile (requires ADMIN role JWT)
+curl -X PUT http://localhost:8080/api/citizens/1 \
+  -H "Authorization: Bearer <JWT_TOKEN_HERE>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Kushan Tharaka Updated",
+    "nic": "971234567V",
+    "email": "kushan.updated@example.com",
+    "mobile": "0779999999",
+    "address": "456, Kandy Road, Kadawatha",
+    "status": "ACTIVE"
+  }'
+
+2.5. Admin Deactivates Citizen Profile (requires ADMIN role JWT)
+# This will set status to INACTIVE and delete the associated login User account.
+curl -X DELETE http://localhost:8080/api/citizens/1 \
+  -H "Authorization: Bearer <JWT_TOKEN_HERE>"
+
+------------------------------------------------------------------------
+3. Service Request Management Endpoints
+------------------------------------------------------------------------
+
+3.1. Citizen Submits Service Request (requires CITIZEN role JWT)
+# This will auto-resolve citizen ID from logged-in user (username = NIC)
+curl -X POST http://localhost:8080/api/service-requests \
+  -H "Authorization: Bearer <JWT_TOKEN_HERE>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "serviceType": "DOCUMENT_RENEWAL",
+    "description": "Requesting renewal of my National Identity Card."
+  }'
+
+3.2. Admin Submits on Behalf of Citizen (requires ADMIN role JWT and citizenId)
+curl -X POST http://localhost:8080/api/service-requests \
+  -H "Authorization: Bearer <JWT_TOKEN_HERE>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "serviceType": "GENERAL_INQUIRY",
+    "description": "General inquiry on service procedures.",
+    "citizenId": 1
+  }'
+
+3.3. Citizen Views Their Own Service Requests (requires CITIZEN role JWT)
+curl -X GET "http://localhost:8080/api/service-requests/my?page=0&size=10" \
+  -H "Authorization: Bearer <JWT_TOKEN_HERE>"
+
+3.4. View Specific Service Request Details (requires CITIZEN, SERVICE_AGENT, or ADMIN JWT)
+# Citizens can only view their own requests, whereas Agent/Admin can view any request.
+curl -X GET http://localhost:8080/api/service-requests/1 \
+  -H "Authorization: Bearer <JWT_TOKEN_HERE>"
+
+3.5. Service Agent or Admin Lists/Filters Service Requests (requires SERVICE_AGENT or ADMIN JWT)
+# Supports full combining of optional filters: citizenId, status, and serviceType.
+curl -X GET "http://localhost:8080/api/service-requests?citizenId=1&status=SUBMITTED&serviceType=DOCUMENT_RENEWAL&page=0&size=10" \
+  -H "Authorization: Bearer <JWT_TOKEN_HERE>"
+
+3.6. Service Agent or Admin Updates Service Request Details (requires SERVICE_AGENT or ADMIN JWT)
+curl -X PUT http://localhost:8080/api/service-requests/1 \
+  -H "Authorization: Bearer <JWT_TOKEN_HERE>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "serviceType": "DOCUMENT_RENEWAL",
+    "description": "Requesting renewal of my National Identity Card - updated reason."
+  }'
+
+3.7. Service Agent or Admin Updates Service Request Status (requires SERVICE_AGENT or ADMIN JWT)
+# Triggers status change notification for the linked Citizen.
+curl -X PATCH http://localhost:8080/api/service-requests/1/status \
+  -H "Authorization: Bearer <JWT_TOKEN_HERE>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "status": "APPROVED"
+  }'
+
+3.8. Admin Cancels (Soft Deletes) Service Request (requires ADMIN role JWT)
+# Updates request status to CANCELLED and generates a cancellation notification.
+curl -X DELETE http://localhost:8080/api/service-requests/1 \
+  -H "Authorization: Bearer <JWT_TOKEN_HERE>"
+
+------------------------------------------------------------------------
+4. Supporting Document Management Endpoints
+------------------------------------------------------------------------
+
+4.1. Citizen Adds Supporting Document Metadata (requires CITIZEN role JWT)
+# Rule: citizen can add documents only to their own service request.
+curl -X POST http://localhost:8080/api/documents \
+  -H "Authorization: Bearer <CITIZEN_JWT_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "serviceRequestId": 1,
+    "type": "IDENTIFICATION",
+    "name": "nic-front-scan.pdf",
+    "documentReference": "DOC-REF-001"
+  }'
+
+4.2. Service Agent Views Supporting Document by ID (requires SERVICE_AGENT role JWT)
+curl -X GET http://localhost:8080/api/documents/1 \
+  -H "Authorization: Bearer <SERVICE_AGENT_JWT_TOKEN>"
+
+4.3. Service Agent Views All Documents for a Service Request (requires SERVICE_AGENT role JWT)
+curl -X GET http://localhost:8080/api/service-requests/1/documents \
+  -H "Authorization: Bearer <SERVICE_AGENT_JWT_TOKEN>"
+
+4.4. Service Agent Updates Full Document Metadata (requires SERVICE_AGENT role JWT)
+curl -X PUT http://localhost:8080/api/documents/1 \
+  -H "Authorization: Bearer <SERVICE_AGENT_JWT_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "PROOF_OF_ADDRESS",
+    "name": "utility-bill-june-2026.pdf",
+    "documentReference": "DOC-REF-001-UPD",
+    "verificationStatus": "VERIFIED"
+  }'
+
+4.5. Service Agent Updates Only Document Verification Status (requires SERVICE_AGENT role JWT)
+curl -X PATCH http://localhost:8080/api/documents/1 \
+  -H "Authorization: Bearer <SERVICE_AGENT_JWT_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "verificationStatus": "REJECTED"
+  }'
+
+4.6. Admin Deletes Supporting Document Metadata (requires ADMIN role JWT)
+curl -X DELETE http://localhost:8080/api/documents/1 \
+  -H "Authorization: Bearer <ADMIN_JWT_TOKEN>"
+
+------------------------------------------------------------------------
+5. Updated Service Request Management Endpoints (Current Controller Coverage)
+------------------------------------------------------------------------
+
+5.1. Citizen Submits Service Request (requires CITIZEN role JWT)
+curl -X POST http://localhost:8080/api/service-requests \
+  -H "Authorization: Bearer <CITIZEN_JWT_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "serviceType": "DOCUMENT_RENEWAL",
+    "description": "Requesting renewal of my National Identity Card."
+  }'
+
+5.2. Admin Submits Service Request on Behalf of Citizen (requires ADMIN role JWT)
+curl -X POST http://localhost:8080/api/service-requests \
+  -H "Authorization: Bearer <ADMIN_JWT_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "serviceType": "GENERAL_INQUIRY",
+    "description": "General inquiry on government service procedure.",
+    "citizenId": 1
+  }'
+
+5.3. Citizen Views Their Own Service Requests (requires CITIZEN role JWT)
+curl -X GET "http://localhost:8080/api/service-requests/my?page=0&size=10" \
+  -H "Authorization: Bearer <CITIZEN_JWT_TOKEN>"
+
+5.4. Citizen, Service Agent, or Admin Views Specific Service Request (requires matching JWT)
+curl -X GET http://localhost:8080/api/service-requests/1 \
+  -H "Authorization: Bearer <JWT_TOKEN_HERE>"
+
+5.5. Service Agent or Admin Lists/Filters Service Requests
+curl -X GET "http://localhost:8080/api/service-requests?citizenId=1&status=SUBMITTED&serviceType=DOCUMENT_RENEWAL&page=0&size=10" \
+  -H "Authorization: Bearer <SERVICE_AGENT_OR_ADMIN_JWT_TOKEN>"
+
+5.6. Service Agent or Admin Updates Service Request Details
+curl -X PUT http://localhost:8080/api/service-requests/1 \
+  -H "Authorization: Bearer <SERVICE_AGENT_OR_ADMIN_JWT_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "serviceType": "DOCUMENT_RENEWAL",
+    "description": "Updated document renewal request details."
+  }'
+
+5.7. Service Agent or Admin Updates Service Request Status
+curl -X PATCH http://localhost:8080/api/service-requests/1/status \
+  -H "Authorization: Bearer <SERVICE_AGENT_OR_ADMIN_JWT_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "status": "IN_REVIEW"
+  }'
+
+5.8. Admin Cancels Service Request
+curl -X DELETE http://localhost:8080/api/service-requests/1 \
+  -H "Authorization: Bearer <ADMIN_JWT_TOKEN>"
+
+------------------------------------------------------------------------
+6. Step-by-Step Execution Guide for Postman / Curl
+------------------------------------------------------------------------
+
+Step 1. Login as Admin and copy the JWT token
+curl -X POST http://localhost:8080/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "admin",
+    "password": "adminpassword"
+  }'
+# Save response.token as <ADMIN_JWT_TOKEN>
+
+Step 2. Register a Service Agent using the Admin token
+curl -X POST http://localhost:8080/api/auth/admin/register \
+  -H "Authorization: Bearer <ADMIN_JWT_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "agent007",
+    "email": "agent@example.com",
+    "password": "agentpassword",
+    "roles": ["SERVICE_AGENT"]
+  }'
+
+Step 3. Create a Citizen profile using the Admin token
+# This also auto-creates a login account with username = NIC and password = NIC.
+curl -X POST http://localhost:8080/api/citizens \
+  -H "Authorization: Bearer <ADMIN_JWT_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Kushan Tharaka",
+    "nic": "971234567V",
+    "email": "kushan@example.com",
+    "mobile": "0771234567",
+    "address": "123, Galle Road, Colombo",
+    "status": "ACTIVE"
+  }'
+# Save response.id as <CITIZEN_ID>
+
+Step 4. Login as the Citizen and copy the JWT token
+curl -X POST http://localhost:8080/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "971234567V",
+    "password": "971234567V"
+  }'
+# Save response.token as <CITIZEN_JWT_TOKEN>
+
+Step 5. Citizen creates a service request
+curl -X POST http://localhost:8080/api/service-requests \
+  -H "Authorization: Bearer <CITIZEN_JWT_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "serviceType": "DOCUMENT_RENEWAL",
+    "description": "Requesting renewal of my National Identity Card."
+  }'
+# Save response.id as <SERVICE_REQUEST_ID>
+
+Step 6. Citizen checks their own service requests
+curl -X GET "http://localhost:8080/api/service-requests/my?page=0&size=10" \
+  -H "Authorization: Bearer <CITIZEN_JWT_TOKEN>"
+
+Step 7. Citizen adds a supporting document to that service request
+curl -X POST http://localhost:8080/api/documents \
+  -H "Authorization: Bearer <CITIZEN_JWT_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "serviceRequestId": <SERVICE_REQUEST_ID>,
+    "type": "IDENTIFICATION",
+    "name": "nic-front-scan.pdf",
+    "documentReference": "DOC-REF-001"
+  }'
+# Save response.id as <DOCUMENT_ID>
+
+Step 8. Login as the Service Agent and copy the JWT token
+curl -X POST http://localhost:8080/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "agent007",
+    "password": "agentpassword"
+  }'
+# Save response.token as <SERVICE_AGENT_JWT_TOKEN>
+
+Step 9. Service Agent views the service request by ID
+curl -X GET http://localhost:8080/api/service-requests/<SERVICE_REQUEST_ID> \
+  -H "Authorization: Bearer <SERVICE_AGENT_JWT_TOKEN>"
+
+Step 10. Service Agent lists all documents for the service request
+curl -X GET http://localhost:8080/api/service-requests/<SERVICE_REQUEST_ID>/documents \
+  -H "Authorization: Bearer <SERVICE_AGENT_JWT_TOKEN>"
+
+Step 11. Service Agent views the document by ID
+curl -X GET http://localhost:8080/api/documents/<DOCUMENT_ID> \
+  -H "Authorization: Bearer <SERVICE_AGENT_JWT_TOKEN>"
+
+Step 12. Service Agent updates service request details
+curl -X PUT http://localhost:8080/api/service-requests/<SERVICE_REQUEST_ID> \
+  -H "Authorization: Bearer <SERVICE_AGENT_JWT_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "serviceType": "DOCUMENT_RENEWAL",
+    "description": "Updated by service agent for review."
+  }'
+
+Step 13. Service Agent updates service request status
+curl -X PATCH http://localhost:8080/api/service-requests/<SERVICE_REQUEST_ID>/status \
+  -H "Authorization: Bearer <SERVICE_AGENT_JWT_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "status": "IN_REVIEW"
+  }'
+
+Step 14. Service Agent updates full document metadata
+curl -X PUT http://localhost:8080/api/documents/<DOCUMENT_ID> \
+  -H "Authorization: Bearer <SERVICE_AGENT_JWT_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "PROOF_OF_ADDRESS",
+    "name": "utility-bill-june-2026.pdf",
+    "documentReference": "DOC-REF-001-UPD",
+    "verificationStatus": "VERIFIED"
+  }'
+
+Step 15. Service Agent updates only the document verification status
+curl -X PATCH http://localhost:8080/api/documents/<DOCUMENT_ID> \
+  -H "Authorization: Bearer <SERVICE_AGENT_JWT_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "verificationStatus": "REJECTED"
+  }'
+
+Step 16. Admin lists service requests with filters
+curl -X GET "http://localhost:8080/api/service-requests?citizenId=<CITIZEN_ID>&status=IN_REVIEW&serviceType=DOCUMENT_RENEWAL&page=0&size=10" \
+  -H "Authorization: Bearer <ADMIN_JWT_TOKEN>"
+
+Step 17. Admin deletes the document
+curl -X DELETE http://localhost:8080/api/documents/<DOCUMENT_ID> \
+  -H "Authorization: Bearer <ADMIN_JWT_TOKEN>"
+
+Step 18. Admin cancels the service request
+curl -X DELETE http://localhost:8080/api/service-requests/<SERVICE_REQUEST_ID> \
+  -H "Authorization: Bearer <ADMIN_JWT_TOKEN>"
+
+------------------------------------------------------------------------
+7. Enum Values Reference
+------------------------------------------------------------------------
+
+ServiceType values used in current code/examples:
+- `GENERAL_INQUIRY`
+- `DOCUMENT_RENEWAL`
+
+RequestStatus values used in current code/examples:
+- `SUBMITTED`
+- `IN_REVIEW`
+- `APPROVED`
+- `REJECTED`
+- `CANCELLED`
+
+DocumentType values from current code:
+- `IDENTIFICATION`
+- `PROOF_OF_ADDRESS`
+- `SUPPORTING_LETTER`
+- `OTHER`
+
+VerificationStatus values from current code:
+- `PENDING`
+- `VERIFIED`
+- `REJECTED`
