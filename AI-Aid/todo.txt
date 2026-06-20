@@ -1,2 +1,64 @@
 Task1: The request sending in the /api/auth/ passwords as plain text and that is not better thing, that should be fix in professional way. Hash sending needed to database level update.
 Task2: Needed to add proper logs inthe service layers in the @AuthController and related services.
+
+[✅ SECURITY WARNING TODO]:
+1. Restrict Public Registration: Make the public register endpoint (POST /api/auth/register) default strictly to the CITIZEN role, completely ignoring or rejecting any roles passed in the request body. (Done)
+2. Admin-only User Creation: Create a separate, protected endpoint (e.g., /api/admin/users or managed within /api/citizens by the Admin) restricted to hasRole('ADMIN') to create SERVICE_AGENT and ADMIN users. (Done)
+
+==================================================
+PROJECT BACKLOG (From GovTech_SSE_Backend_Assessment_Candidates.pdf)
+==================================================
+
+1. Authentication & Security Configuration
+[✅] Task 1.1: Configure Spring Security and JWT authentication.
+[✅] Task 1.2: Implement User Registration endpoint (POST /api/auth/register).
+[✅] Task 1.3: Implement User Login endpoint (POST /api/auth/login) with password hashing.
+[✅] Task 1.4: Implement Get Current Authenticated User profile endpoint (GET /api/auth/me).
+
+2. Database Model & Setup
+[✅] Task 2.1: Define entity schemas for Citizens, Service Requests, Supporting Documents, Notifications, and Users.
+[✅] Task 2.2: Establish entity relationships and JPA annotations.
+[✅] Task 2.3: Create Database Repositories for Citizens, Service Requests, Supporting Documents, Notifications, and Users.
+[ ] Task 2.4: Validate database persistence and SQL schema creation.
+
+3. Citizen Management (User Stories 1.1 - 1.5)
+[✅] Task 3.1: Create Citizen Profile endpoint (POST /api/citizens) for Administrators with validations (mandatory info, duplicate check on unique identifier).
+[✅] Task 3.2: View Citizen Information endpoint (GET /api/citizens/{id}) for Service Agents.
+[✅] Task 3.3: List or Search Citizens endpoint (GET /api/citizens) with search and pagination support for Administrators.
+[✅] Task 3.4: Update Citizen Information endpoint (PUT /api/citizens/{id}) for Administrators with validations.
+[✅] Task 3.5: Delete/Deactivate Citizen endpoint (DELETE /api/citizens/{id}) for Administrators (soft/hard deletion to be decided and documented).
+
+4. Service Request Management (User Stories 2.1 - 2.7)
+[✅] Task 4.1: Submit Service Request endpoint (POST /api/service-requests) for Citizens with validations (mandatory fields, citizen presence validation).
+[✅] Task 4.2: View My Service Requests endpoint (GET /api/service-requests/my) for Citizens to view their own requests.
+[✅] Task 4.3: View Service Request Details endpoint (GET /api/service-requests/{id}) for Service Agents.
+[✅] Task 4.4: List or Search Service Requests endpoint (GET /api/service-requests) for Service Agents with filter options (by citizen, status, or service type).
+[✅] Task 4.5: Update Service Request Details endpoint (PUT /api/service-requests/{id}) for Service Agents.
+[✅] Task 4.6: Update Service Request Status endpoint (PATCH /api/service-requests/{id}/status) for Service Agents supporting statuses: SUBMITTED, IN_REVIEW, APPROVED, REJECTED. Ensure status validation and notification trigger.
+[✅] Task 4.7: Delete/Cancel Service Request endpoint (DELETE /api/service-requests/{id}) for Administrators.
+
+5. Supporting Document Management (User Stories 3.1 - 3.5)
+[ ] Task 5.1: Add Supporting Document metadata endpoint (POST /api/documents) for Citizens linking to a valid Service Request.
+[ ] Task 5.2: View Supporting Document Information by reference endpoint (GET /api/documents/{id}) for Service Agents.
+[ ] Task 5.3: View all Documents related to a Service Request endpoint (GET /api/service-requests/{id}/documents) for Service Agents.
+[ ] Task 5.4: Update Document Information or Verification Status endpoint (PUT/PATCH /api/documents/{id}) for Service Agents.
+[ ] Task 5.5: Delete Document Information endpoint (DELETE /api/documents/{id}) for Administrators.
+
+6. Notification & Status Tracking (User Stories 4.1 - 4.4)
+[ ] Task 6.1: Auto-generate Notification record when a service request status changes (unread by default).
+[ ] Task 6.2: View My Notifications endpoint (GET /api/notifications/my) for Citizens.
+[ ] Task 6.3: Mark Notification as Read endpoint (PATCH /api/notifications/{id}/read) for Citizens.
+[ ] Task 6.4: View Service Request Status History endpoint (GET /api/service-requests/{id}/history) for Service Agents to track state transitions.
+
+7. Security & Role-Based Access Control
+[ ] Task 7.1: Restrict Admin-only endpoints to ADMIN role.
+[ ] Task 7.2: Restrict Service Agent endpoints to SERVICE_AGENT role.
+[ ] Task 7.3: Restrict Citizen endpoints to CITIZEN role.
+[ ] Task 7.4: Ensure unauthorized or invalid access attempts return appropriate error responses.
+
+8. Non-Functional, Testing & Deliverables
+[ ] Task 8.1: Implement Unit and/or Integration tests for at least one service component.
+[ ] Task 8.2: Set up API documentation (Swagger/OpenAPI UI integration).
+[ ] Task 8.3: Export and provide a working Postman Collection for testing all APIs.
+[ ] Task 8.4: Create Docker Compose config to spin up the application and DB easily.
+[ ] Task 8.5: Write comprehensive README file with setup instructions, run instructions, design decisions, and assumptions.

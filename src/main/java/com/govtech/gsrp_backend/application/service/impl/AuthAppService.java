@@ -95,6 +95,37 @@ public class AuthAppService implements IAuthAppService {
                 .build();
 
         Set<Role> roles = new HashSet<>();
+        roles.add(Role.CITIZEN); // Public registration strictly defaults to CITIZEN role
+
+        user.setRoles(roles);
+        userRepository.save(user);
+
+        log.info("User {} registered successfully with roles: {}", user.getUsername(), roles);
+        return new MessageResponse("User registered successfully!");
+    }
+
+    @Override
+    @Transactional
+    public MessageResponse registerUserByAdmin(SignupRequest signUpRequest) {
+        log.info("Admin attempting to register user: {}", signUpRequest.getUsername());
+
+        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
+            log.warn("Registration failed: Username {} is already taken", signUpRequest.getUsername());
+            throw new BusinessException("Error: Username is already taken!");
+        }
+
+        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+            log.warn("Registration failed: Email {} is already in use", signUpRequest.getEmail());
+            throw new BusinessException("Error: Email is already in use!");
+        }
+
+        User user = User.builder()
+                .username(signUpRequest.getUsername())
+                .email(signUpRequest.getEmail())
+                .password(encoder.encode(signUpRequest.getPassword()))
+                .build();
+
+        Set<Role> roles = new HashSet<>();
         if (signUpRequest.getRoles() == null || signUpRequest.getRoles().isEmpty()) {
             roles.add(Role.CITIZEN);
         } else {
@@ -104,8 +135,8 @@ public class AuthAppService implements IAuthAppService {
         user.setRoles(roles);
         userRepository.save(user);
 
-        log.info("User {} registered successfully with roles: {}", user.getUsername(), roles);
-        return new MessageResponse("User registered successfully!");
+        log.info("User {} registered successfully by admin with roles: {}", user.getUsername(), roles);
+        return new MessageResponse("User registered successfully by admin!");
     }
 
     @Override

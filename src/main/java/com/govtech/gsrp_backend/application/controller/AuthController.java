@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -30,6 +31,15 @@ public class AuthController {
         log.info("Received registration request for username: {}, email: {}", signUpRequest.getUsername(), signUpRequest.getEmail());
         MessageResponse response = authService.registerUser(signUpRequest);
         log.info("Registration request processed successfully for username: {}", signUpRequest.getUsername());
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/admin/register")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> registerUserByAdmin(@Valid @RequestBody SignupRequest signUpRequest) {
+        log.info("Admin registration request received for username: {}, email: {}", signUpRequest.getUsername(), signUpRequest.getEmail());
+        MessageResponse response = authService.registerUserByAdmin(signUpRequest);
+        log.info("Admin registration request processed successfully for username: {}", signUpRequest.getUsername());
         return ResponseEntity.ok(response);
     }
 
