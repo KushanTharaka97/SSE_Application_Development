@@ -68,7 +68,7 @@ public class ServiceRequestExecutionProcessServiceImpl implements ServiceRequest
                 .build();
 
         request = serviceRequestRepository.save(request);
-        log.info("Service request submitted successfully with ID: {} for Citizen NIC: {}", request.getId(), citizen.getNic());
+        log.info("  Service request submitted successfully with ID: {} for Citizen NIC: {}", request.getId(), citizen.getNic());
 
         // Create initial status change notification
         Notification notification = Notification.builder()
@@ -77,6 +77,7 @@ public class ServiceRequestExecutionProcessServiceImpl implements ServiceRequest
                 .message("Your Service Request for " + request.getServiceType() + " has been successfully submitted.")
                 .status(NotificationStatus.UNREAD)
                 .build();
+        log.error(" Notification : "+ notification.toString());
         notificationRepository.save(notification);
 
         return mapToResponse(request);

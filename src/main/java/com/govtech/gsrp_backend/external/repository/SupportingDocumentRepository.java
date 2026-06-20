@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface SupportingDocumentRepository extends JpaRepository<SupportingDocument, Long> {
-    List<SupportingDocument> findByRequestReferenceId(Long serviceRequestId);
+    List<SupportingDocument> findByRequestReferenceIdOrderByIdAsc(Long serviceRequestId);
 }

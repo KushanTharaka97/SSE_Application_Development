@@ -27,9 +27,10 @@ public class SupportingDocument {
     @NotNull(message = "Request reference is mandatory")
     private ServiceRequest requestReference;
 
+
     @NotNull(message = "Document type is mandatory")
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 50)
+    @Column( nullable = false, length = 50)
     private DocumentType type;
 
     @NotBlank(message = "Document name is mandatory")

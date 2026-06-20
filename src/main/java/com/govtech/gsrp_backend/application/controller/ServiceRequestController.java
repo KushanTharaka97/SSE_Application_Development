@@ -1,10 +1,12 @@
 package com.govtech.gsrp_backend.application.controller;
 
+import com.govtech.gsrp_backend.application.dto.DocumentResponse;
 import com.govtech.gsrp_backend.application.dto.ServiceRequestResponse;
 import com.govtech.gsrp_backend.application.dto.ServiceRequestSubmitDTO;
 import com.govtech.gsrp_backend.application.dto.StatusUpdateRequest;
 import com.govtech.gsrp_backend.domain.enums.RequestStatus;
 import com.govtech.gsrp_backend.domain.enums.ServiceType;
+import com.govtech.gsrp_backend.domain.service.DocumentExecutionService;
 import com.govtech.gsrp_backend.domain.service.ServiceRequestExecutionProcessService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -23,6 +26,9 @@ public class ServiceRequestController {
 
     @Autowired
     private ServiceRequestExecutionProcessService serviceRequestService;
+
+    @Autowired
+    private DocumentExecutionService documentExecutionService;
 
     @PostMapping
     @PreAuthorize("hasAnyRole('CITIZEN', 'ADMIN')")
@@ -52,6 +58,14 @@ public class ServiceRequestController {
             Principal principal) {
         log.info("REST request to get Service Request ID: {}, Caller: {}", id, principal.getName());
         ServiceRequestResponse response = serviceRequestService.getRequestById(id, principal.getName());
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{id}/documents")
+    @PreAuthorize("hasRole('SERVICE_AGENT')")
+    public ResponseEntity<List<DocumentResponse>> getRequestDocuments(@PathVariable Long id) {
+        log.info("REST request to get documents for Service Request ID: {}", id);
+        List<DocumentResponse> response = documentExecutionService.getDocumentsByServiceRequestId(id);
         return ResponseEntity.ok(response);
     }
 

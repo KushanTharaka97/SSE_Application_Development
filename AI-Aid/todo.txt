@@ -1,6 +1,10 @@
 Task1: The request sending in the /api/auth/ passwords as plain text and that is not better thing, that should be fix in professional way. Hash sending needed to database level update.
 Task2: Needed to add proper logs inthe service layers in the @AuthController and related services.
 
+Question 1: Is there create admin endpoint avaialable
+Questoin 2: Is this safe in security level
+
+Task3: I need to actuator to get health or the repository.
 [✅ SECURITY WARNING TODO]:
 1. Restrict Public Registration: Make the public register endpoint (POST /api/auth/register) default strictly to the CITIZEN role, completely ignoring or rejecting any roles passed in the request body. (Done)
 2. Admin-only User Creation: Create a separate, protected endpoint (e.g., /api/admin/users or managed within /api/citizens by the Admin) restricted to hasRole('ADMIN') to create SERVICE_AGENT and ADMIN users. (Done)
@@ -38,11 +42,11 @@ PROJECT BACKLOG (From GovTech_SSE_Backend_Assessment_Candidates.pdf)
 [✅] Task 4.7: Delete/Cancel Service Request endpoint (DELETE /api/service-requests/{id}) for Administrators.
 
 5. Supporting Document Management (User Stories 3.1 - 3.5)
-[ ] Task 5.1: Add Supporting Document metadata endpoint (POST /api/documents) for Citizens linking to a valid Service Request.
-[ ] Task 5.2: View Supporting Document Information by reference endpoint (GET /api/documents/{id}) for Service Agents.
-[ ] Task 5.3: View all Documents related to a Service Request endpoint (GET /api/service-requests/{id}/documents) for Service Agents.
-[ ] Task 5.4: Update Document Information or Verification Status endpoint (PUT/PATCH /api/documents/{id}) for Service Agents.
-[ ] Task 5.5: Delete Document Information endpoint (DELETE /api/documents/{id}) for Administrators.
+[✅] Task 5.1: Add Supporting Document metadata endpoint (POST /api/documents) for Citizens linking to a valid Service Request.
+[✅] Task 5.2: View Supporting Document Information by reference endpoint (GET /api/documents/{id}) for Service Agents.
+[✅] Task 5.3: View all Documents related to a Service Request endpoint (GET /api/service-requests/{id}/documents) for Service Agents.
+[✅] Task 5.4: Update Document Information or Verification Status endpoint (PUT/PATCH /api/documents/{id}) for Service Agents.
+[✅] Task 5.5: Delete Document Information endpoint (DELETE /api/documents/{id}) for Administrators.
 
 6. Notification & Status Tracking (User Stories 4.1 - 4.4)
 [ ] Task 6.1: Auto-generate Notification record when a service request status changes (unread by default).
