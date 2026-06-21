@@ -1,11 +1,13 @@
 package com.govtech.gsrp_backend.domain.service.impl;
 
+import com.govtech.gsrp_backend.application.dto.ServiceRequestStatusHistoryResponse;
 import com.govtech.gsrp_backend.application.dto.ServiceRequestResponse;
 import com.govtech.gsrp_backend.application.dto.ServiceRequestSubmitDTO;
 import com.govtech.gsrp_backend.application.exception.BusinessException;
 import com.govtech.gsrp_backend.domain.entity.Citizen;
 import com.govtech.gsrp_backend.domain.entity.Notification;
 import com.govtech.gsrp_backend.domain.entity.ServiceRequest;
+import com.govtech.gsrp_backend.domain.entity.ServiceRequestStatusHistory;
 import com.govtech.gsrp_backend.domain.entity.User;
 import com.govtech.gsrp_backend.domain.enums.NotificationStatus;
 import com.govtech.gsrp_backend.domain.enums.RequestStatus;
@@ -15,6 +17,7 @@ import com.govtech.gsrp_backend.domain.util.Role;
 import com.govtech.gsrp_backend.external.repository.CitizenRepository;
 import com.govtech.gsrp_backend.external.repository.NotificationRepository;
 import com.govtech.gsrp_backend.external.repository.ServiceRequestRepository;
+import com.govtech.gsrp_backend.external.repository.ServiceRequestStatusHistoryRepository;
 import com.govtech.gsrp_backend.external.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +26,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -39,6 +44,9 @@ public class ServiceRequestExecutionProcessServiceImpl implements ServiceRequest
 
     @Autowired
     private NotificationRepository notificationRepository;
+
+    @Autowired
+    private ServiceRequestStatusHistoryRepository serviceRequestStatusHistoryRepository;
 
     @Override
     @Transactional
@@ -68,17 +76,10 @@ public class ServiceRequestExecutionProcessServiceImpl implements ServiceRequest
                 .build();
 
         request = serviceRequestRepository.save(request);
-        log.info("  Service request submitted successfully with ID: {} for Citizen NIC: {}", request.getId(), citizen.getNic());
+        log.info("Service request submitted successfully with ID: {} for Citizen NIC: {}", request.getId(), citizen.getNic());
 
-        // Create initial status change notification
-        Notification notification = Notification.builder()
-                .citizen(citizen)
-                .serviceRequest(request)
-                .message("Your Service Request for " + request.getServiceType() + " has been successfully submitted.")
-                .status(NotificationStatus.UNREAD)
-                .build();
-        log.error(" Notification : "+ notification.toString());
-        notificationRepository.save(notification);
+        createNotification(request, "Your Service Request for " + request.getServiceType() + " has been successfully submitted.");
+        createStatusHistory(request, null, RequestStatus.SUBMITTED, currentUsername);
 
         return mapToResponse(request);
     }
@@ -146,12 +147,13 @@ public class ServiceRequestExecutionProcessServiceImpl implements ServiceRequest
 
     @Override
     @Transactional
-    public ServiceRequestResponse updateRequestStatus(Long id, RequestStatus status) {
-        log.info("Updating status for service request ID: {} to status: {}", id, status);
+    public ServiceRequestResponse updateRequestStatus(Long id, RequestStatus status, String currentUsername) {
+        log.info("Updating status for service request ID: {} to status: {} by user: {}", id, status, currentUsername);
         ServiceRequest request = serviceRequestRepository.findById(id)
                 .orElseThrow(() -> new BusinessException("Service Request not found with ID: " + id));
 
-        if (request.getStatus() == status) {
+        RequestStatus previousStatus = request.getStatus();
+        if (previousStatus == status) {
             return mapToResponse(request);
         }
 
@@ -159,38 +161,45 @@ public class ServiceRequestExecutionProcessServiceImpl implements ServiceRequest
         request = serviceRequestRepository.save(request);
         log.info("Service request ID {} status updated to {}.", id, status);
 
-        // Generate notification
-        Notification notification = Notification.builder()
-                .citizen(request.getCitizenReference())
-                .serviceRequest(request)
-                .message("Your Service Request ID " + request.getId() + " status has been updated to " + status + ".")
-                .status(NotificationStatus.UNREAD)
-                .build();
-        notificationRepository.save(notification);
-        log.info("Notification created for Citizen ID {} status update to {}", request.getCitizenReference().getId(), status);
+        createNotification(request, "Your Service Request ID " + request.getId() + " status has been updated to " + status + ".");
+        createStatusHistory(request, previousStatus, status, currentUsername);
 
         return mapToResponse(request);
     }
 
     @Override
     @Transactional
-    public void cancelRequest(Long id) {
-        log.info("Cancelling service request ID: {}", id);
+    public void cancelRequest(Long id, String currentUsername) {
+        log.info("Cancelling service request ID: {} by user: {}", id, currentUsername);
         ServiceRequest request = serviceRequestRepository.findById(id)
                 .orElseThrow(() -> new BusinessException("Service Request not found with ID: " + id));
+
+        RequestStatus previousStatus = request.getStatus();
+        if (previousStatus == RequestStatus.CANCELLED) {
+            return;
+        }
 
         request.setStatus(RequestStatus.CANCELLED);
         serviceRequestRepository.save(request);
         log.info("Service request ID {} marked as CANCELLED.", id);
 
-        // Generate cancellation notification
-        Notification notification = Notification.builder()
-                .citizen(request.getCitizenReference())
-                .serviceRequest(request)
-                .message("Your Service Request ID " + request.getId() + " has been cancelled by the Administrator.")
-                .status(NotificationStatus.UNREAD)
-                .build();
-        notificationRepository.save(notification);
+        createNotification(request, "Your Service Request ID " + request.getId() + " has been cancelled by the Administrator.");
+        createStatusHistory(request, previousStatus, RequestStatus.CANCELLED, currentUsername);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ServiceRequestStatusHistoryResponse> getStatusHistory(Long id) {
+        log.info("Retrieving status history for service request ID: {}", id);
+
+        if (!serviceRequestRepository.existsById(id)) {
+            throw new BusinessException("Service Request not found with ID: " + id);
+        }
+
+        return serviceRequestStatusHistoryRepository.findByServiceRequestIdOrderByChangedAtAscIdAsc(id)
+                .stream()
+                .map(this::mapToStatusHistoryResponse)
+                .toList();
     }
 
     private ServiceRequestResponse mapToResponse(ServiceRequest request) {
@@ -204,5 +213,38 @@ public class ServiceRequestExecutionProcessServiceImpl implements ServiceRequest
                 .createdDate(request.getCreatedDate())
                 .updatedDate(request.getUpdatedDate())
                 .build();
+    }
+
+    private ServiceRequestStatusHistoryResponse mapToStatusHistoryResponse(ServiceRequestStatusHistory history) {
+        return ServiceRequestStatusHistoryResponse.builder()
+                .id(history.getId())
+                .serviceRequestId(history.getServiceRequest().getId())
+                .previousStatus(history.getPreviousStatus())
+                .newStatus(history.getNewStatus())
+                .changedBy(history.getChangedBy())
+                .changedAt(history.getChangedAt())
+                .build();
+    }
+
+    private void createNotification(ServiceRequest request, String message) {
+        Notification notification = Notification.builder()
+                .citizen(request.getCitizenReference())
+                .serviceRequest(request)
+                .message(message)
+                .status(NotificationStatus.UNREAD)
+                .build();
+        notificationRepository.save(notification);
+        log.info("Notification created for Citizen ID {} and service request ID {}", request.getCitizenReference().getId(), request.getId());
+    }
+
+    private void createStatusHistory(ServiceRequest request, RequestStatus previousStatus, RequestStatus newStatus, String changedBy) {
+        ServiceRequestStatusHistory history = ServiceRequestStatusHistory.builder()
+                .serviceRequest(request)
+                .previousStatus(previousStatus)
+                .newStatus(newStatus)
+                .changedBy(changedBy)
+                .build();
+        serviceRequestStatusHistoryRepository.save(history);
+        log.info("Status history recorded for service request ID {} from {} to {} by {}", request.getId(), previousStatus, newStatus, changedBy);
     }
 }

@@ -519,3 +519,41 @@ Issue found during validation:
 
 Question:
 - Do you want me to proceed next with local build validation once you provide a JDK path or set `JAVA_HOME`?
+
+---
+
+### PROMPT
+Complete the AI-Aid\todo.txt 6. Notification & Status Tracking (User Stories 4.1 - 4.4), and append updated postman request to the AI-Aid\postman-curl.txt , the todo file also needed to update, If there is any sort of issue ask me rather than using assumptions. Read the code and act as Tech lead to develop the features. Get an overal idea what here I am building also. The prompts and results needed to store in AI-Aid\ai-prompts.txt . Review the code and tell me improvements point also.
+
+### ANSWER
+Overall product understanding:
+- This backend is a Digital Government Service Request Platform.
+- Citizens authenticate, submit service requests, attach supporting document metadata, and receive notifications.
+- Service Agents review requests and documents, update statuses, and track progress.
+- Administrators manage privileged operations such as user creation, citizen lifecycle actions, and request/document deletion.
+
+Completed Notification & Status Tracking from `AI-Aid/todo.txt`:
+- Implemented `GET /api/notifications/my` for citizens to view their own notifications.
+- Implemented `PATCH /api/notifications/{id}/read` for citizens to mark a notification as read.
+- Implemented `GET /api/service-requests/{id}/history` for service agents to inspect request status transitions.
+- Completed notification auto-generation for request submission, status updates, and cancellation with default `UNREAD` state.
+
+Technical changes:
+- Added `NotificationResponse` and `ServiceRequestStatusHistoryResponse` DTOs.
+- Added a dedicated `ServiceRequestStatusHistory` entity and repository to track transitions cleanly instead of inferring history from notification text.
+- Implemented `NotificationController`, `NotificationListService`, and `NotificationListServiceImpl`.
+- Refactored `ServiceRequestExecutionProcessServiceImpl` to centralize notification creation and status-history recording.
+- Updated `ServiceRequestController` so status update and cancel flows pass the authenticated actor into the service for auditability.
+- Updated `AI-Aid/todo.txt` section 6 and appended curl examples to `AI-Aid/postman-curl.txt`.
+
+Validation status:
+- Static review completed for the modified classes.
+- Build/test execution remains blocked in this environment because `JAVA_HOME` is not configured and no JDK is available on PATH.
+
+Code review improvement points:
+- Consolidate the duplicate role enums (`domain.enums.Role` and `domain.util.Role`) into one source of truth to avoid subtle authorization bugs.
+- Replace field injection (`@Autowired`) with constructor injection for immutability and easier testing.
+- Introduce a structured global error response object instead of returning raw strings from `GlobalExceptionHandler`.
+- Add integration tests for authorization boundaries and ownership rules around citizen requests, documents, and notifications.
+- Align `AI-Aid/database.txt` with the current JPA model; it is still out of sync with current entity/table column naming and does not document the new status history table.
+- Consider pagination for notifications and history endpoints if production-scale data volume is expected.

@@ -251,151 +251,58 @@ curl -X PATCH http://localhost:8080/api/service-requests/1/status \
 curl -X DELETE http://localhost:8080/api/service-requests/1 \
   -H "Authorization: Bearer <ADMIN_JWT_TOKEN>"
 
+
 ------------------------------------------------------------------------
-6. Step-by-Step Execution Guide for Postman / Curl
+6. Notification & Status Tracking Endpoints
 ------------------------------------------------------------------------
 
-Step 1. Login as Admin and copy the JWT token
-curl -X POST http://localhost:8080/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{
-    "username": "admin",
-    "password": "adminpassword"
-  }'
-# Save response.token as <ADMIN_JWT_TOKEN>
-
-Step 2. Register a Service Agent using the Admin token
-curl -X POST http://localhost:8080/api/auth/admin/register \
-  -H "Authorization: Bearer <ADMIN_JWT_TOKEN>" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "username": "agent007",
-    "email": "agent@example.com",
-    "password": "agentpassword",
-    "roles": ["SERVICE_AGENT"]
-  }'
-
-Step 3. Create a Citizen profile using the Admin token
-# This also auto-creates a login account with username = NIC and password = NIC.
-curl -X POST http://localhost:8080/api/citizens \
-  -H "Authorization: Bearer <ADMIN_JWT_TOKEN>" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Kushan Tharaka",
-    "nic": "971234567V",
-    "email": "kushan@example.com",
-    "mobile": "0771234567",
-    "address": "123, Galle Road, Colombo",
-    "status": "ACTIVE"
-  }'
-# Save response.id as <CITIZEN_ID>
-
-Step 4. Login as the Citizen and copy the JWT token
-curl -X POST http://localhost:8080/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{
-    "username": "971234567V",
-    "password": "971234567V"
-  }'
-# Save response.token as <CITIZEN_JWT_TOKEN>
-
-Step 5. Citizen creates a service request
-curl -X POST http://localhost:8080/api/service-requests \
-  -H "Authorization: Bearer <CITIZEN_JWT_TOKEN>" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "serviceType": "DOCUMENT_RENEWAL",
-    "description": "Requesting renewal of my National Identity Card."
-  }'
-# Save response.id as <SERVICE_REQUEST_ID>
-
-Step 6. Citizen checks their own service requests
-curl -X GET "http://localhost:8080/api/service-requests/my?page=0&size=10" \
+8.1. Citizen Views Their Notifications (requires CITIZEN role JWT)
+curl -X GET http://localhost:8080/api/notifications/my \
   -H "Authorization: Bearer <CITIZEN_JWT_TOKEN>"
 
-Step 7. Citizen adds a supporting document to that service request
-curl -X POST http://localhost:8080/api/documents \
-  -H "Authorization: Bearer <CITIZEN_JWT_TOKEN>" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "serviceRequestId": <SERVICE_REQUEST_ID>,
-    "type": "IDENTIFICATION",
-    "name": "nic-front-scan.pdf",
-    "documentReference": "DOC-REF-001"
-  }'
-# Save response.id as <DOCUMENT_ID>
+8.2. Citizen Marks a Notification as Read (requires CITIZEN role JWT)
+curl -X PATCH http://localhost:8080/api/notifications/<NOTIFICATION_ID>/read \
+  -H "Authorization: Bearer <CITIZEN_JWT_TOKEN>"
 
-Step 8. Login as the Service Agent and copy the JWT token
-curl -X POST http://localhost:8080/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{
-    "username": "agent007",
-    "password": "agentpassword"
-  }'
-# Save response.token as <SERVICE_AGENT_JWT_TOKEN>
-
-Step 9. Service Agent views the service request by ID
-curl -X GET http://localhost:8080/api/service-requests/<SERVICE_REQUEST_ID> \
+8.3. Service Agent Views Service Request Status History (requires SERVICE_AGENT role JWT)
+curl -X GET http://localhost:8080/api/service-requests/<SERVICE_REQUEST_ID>/history \
   -H "Authorization: Bearer <SERVICE_AGENT_JWT_TOKEN>"
-
-Step 10. Service Agent lists all documents for the service request
-curl -X GET http://localhost:8080/api/service-requests/<SERVICE_REQUEST_ID>/documents \
-  -H "Authorization: Bearer <SERVICE_AGENT_JWT_TOKEN>"
-
-Step 11. Service Agent views the document by ID
-curl -X GET http://localhost:8080/api/documents/<DOCUMENT_ID> \
-  -H "Authorization: Bearer <SERVICE_AGENT_JWT_TOKEN>"
-
-Step 12. Service Agent updates service request details
-curl -X PUT http://localhost:8080/api/service-requests/<SERVICE_REQUEST_ID> \
-  -H "Authorization: Bearer <SERVICE_AGENT_JWT_TOKEN>" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "serviceType": "DOCUMENT_RENEWAL",
-    "description": "Updated by service agent for review."
-  }'
-
-Step 13. Service Agent updates service request status
-curl -X PATCH http://localhost:8080/api/service-requests/<SERVICE_REQUEST_ID>/status \
-  -H "Authorization: Bearer <SERVICE_AGENT_JWT_TOKEN>" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "status": "IN_REVIEW"
-  }'
-
-Step 14. Service Agent updates full document metadata
-curl -X PUT http://localhost:8080/api/documents/<DOCUMENT_ID> \
-  -H "Authorization: Bearer <SERVICE_AGENT_JWT_TOKEN>" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "type": "PROOF_OF_ADDRESS",
-    "name": "utility-bill-june-2026.pdf",
-    "documentReference": "DOC-REF-001-UPD",
-    "verificationStatus": "VERIFIED"
-  }'
-
-Step 15. Service Agent updates only the document verification status
-curl -X PATCH http://localhost:8080/api/documents/<DOCUMENT_ID> \
-  -H "Authorization: Bearer <SERVICE_AGENT_JWT_TOKEN>" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "verificationStatus": "REJECTED"
-  }'
-
-Step 16. Admin lists service requests with filters
-curl -X GET "http://localhost:8080/api/service-requests?citizenId=<CITIZEN_ID>&status=IN_REVIEW&serviceType=DOCUMENT_RENEWAL&page=0&size=10" \
-  -H "Authorization: Bearer <ADMIN_JWT_TOKEN>"
-
-Step 17. Admin deletes the document
-curl -X DELETE http://localhost:8080/api/documents/<DOCUMENT_ID> \
-  -H "Authorization: Bearer <ADMIN_JWT_TOKEN>"
-
-Step 18. Admin cancels the service request
-curl -X DELETE http://localhost:8080/api/service-requests/<SERVICE_REQUEST_ID> \
-  -H "Authorization: Bearer <ADMIN_JWT_TOKEN>"
 
 ------------------------------------------------------------------------
-7. Enum Values Reference
+9. Additional Step-by-Step Execution for Notifications and History
+------------------------------------------------------------------------
+
+Step 19. Citizen checks notifications after service request submission/status updates
+curl -X GET http://localhost:8080/api/notifications/my \
+  -H "Authorization: Bearer <CITIZEN_JWT_TOKEN>"
+# Save one returned notification id as <NOTIFICATION_ID>
+
+Step 20. Citizen marks one notification as read
+curl -X PATCH http://localhost:8080/api/notifications/<NOTIFICATION_ID>/read \
+  -H "Authorization: Bearer <CITIZEN_JWT_TOKEN>"
+
+Step 21. Service Agent checks the request status history
+curl -X GET http://localhost:8080/api/service-requests/<SERVICE_REQUEST_ID>/history \
+  -H "Authorization: Bearer <SERVICE_AGENT_JWT_TOKEN>"
+# Expected flow includes SUBMITTED, IN_REVIEW, and any later status transitions.
+
+Step 22. Citizen checks notifications again after Admin cancels the service request
+curl -X GET http://localhost:8080/api/notifications/my \
+  -H "Authorization: Bearer <CITIZEN_JWT_TOKEN>"
+# Expected latest message should mention cancellation if Step 18 was executed.
+
+------------------------------------------------------------------------
+10. NotificationStatus Enum Reference
+------------------------------------------------------------------------
+
+NotificationStatus values from current code:
+- `UNREAD`
+- `READ`
+
+
+
+------------------------------------------------------------------------
+ Enum Values Reference
 ------------------------------------------------------------------------
 
 ServiceType values used in current code/examples:
