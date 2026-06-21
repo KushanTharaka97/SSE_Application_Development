@@ -1,0 +1,170 @@
+{
+  "info": {
+    "name": "GSRP Backend API",
+    "_postman_id": "1de5f0f5-fc9c-46e9-9f00-7f5ff5e85301",
+    "description": "Postman collection for the Government Service Request Platform backend.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "adminToken", "value": "" },
+    { "key": "citizenToken", "value": "" },
+    { "key": "serviceAgentToken", "value": "" },
+    { "key": "citizenId", "value": "1" },
+    { "key": "serviceRequestId", "value": "1" },
+    { "key": "documentId", "value": "1" },
+    { "key": "notificationId", "value": "1" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login Admin",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"adminpassword\"\n}"
+            },
+            "url": "{{baseUrl}}/api/auth/login"
+          }
+        },
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": "{{baseUrl}}/api/auth/me"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Citizens",
+      "item": [
+        {
+          "name": "Create Citizen",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Kushan Tharaka\",\n  \"nic\": \"971234567V\",\n  \"email\": \"kushan@example.com\",\n  \"mobile\": \"0771234567\",\n  \"address\": \"123, Galle Road, Colombo\",\n  \"status\": \"ACTIVE\"\n}"
+            },
+            "url": "{{baseUrl}}/api/citizens"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Service Requests",
+      "item": [
+        {
+          "name": "Submit Service Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{citizenToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"serviceType\": \"DOCUMENT_RENEWAL\",\n  \"description\": \"Requesting renewal of my National Identity Card.\"\n}"
+            },
+            "url": "{{baseUrl}}/api/service-requests"
+          }
+        },
+        {
+          "name": "Get Request History",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{serviceAgentToken}}" }],
+            "url": "{{baseUrl}}/api/service-requests/{{serviceRequestId}}/history"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Documents",
+      "item": [
+        {
+          "name": "Upload Document",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{citizenToken}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "file", "type": "file", "src": "" },
+                { "key": "serviceRequestId", "value": "{{serviceRequestId}}", "type": "text" },
+                { "key": "type", "value": "IDENTIFICATION", "type": "text" },
+                { "key": "name", "value": "nic-front-scan.pdf", "type": "text" }
+              ]
+            },
+            "url": "{{baseUrl}}/api/documents"
+          }
+        },
+        {
+          "name": "Get Document By Id",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{serviceAgentToken}}" }],
+            "url": "{{baseUrl}}/api/documents/{{documentId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        {
+          "name": "Get My Notifications",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{citizenToken}}" }],
+            "url": "{{baseUrl}}/api/notifications/my"
+          }
+        },
+        {
+          "name": "Mark Notification Read",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{citizenToken}}" }],
+            "url": "{{baseUrl}}/api/notifications/{{notificationId}}/read"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Non-Functional",
+      "item": [
+        {
+          "name": "Swagger UI",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/swagger-ui.html"
+          }
+        },
+        {
+          "name": "OpenAPI JSON",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/v3/api-docs"
+          }
+        },
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/actuator/health"
+          }
+        }
+      ]
+    }
+  ]
+}
