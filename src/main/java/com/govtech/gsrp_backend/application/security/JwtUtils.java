@@ -18,10 +18,10 @@ import java.util.function.Function;
 @Component
 public class JwtUtils {
 
-    @Value("${gsrp.jwt.secret:secretKeyWithAtLeast32CharactersForHS256Algorithm}")
+    @Value("${jwt.secret:secretKeyWithAtLeast32CharactersForHS256Algorithm}")
     private String jwtSecret;
 
-    @Value("${gsrp.jwt.expiration:86400000}")
+    @Value("${jwt.expiration-ms:86400000}")
     private int jwtExpirationMs;
 
     public String generateJwtToken(Authentication authentication) {

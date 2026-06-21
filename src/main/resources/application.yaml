@@ -33,3 +33,26 @@ app:
 jwt:
   secret: ${JWT_SECRET:defaultSecretKeyForDevelopmentOnlyChangeInProduction}
   expiration-ms: ${JWT_EXPIRATION_MS:86400000}
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+    tagsSorter: alpha
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never
+
+info:
+  app:
+    name: Government Service Request Platform
+    description: Backend API for citizens, service agents, and administrators.
+    version: 1.0.0

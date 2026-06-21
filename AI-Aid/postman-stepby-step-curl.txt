@@ -63,13 +63,10 @@ curl -X GET "http://localhost:8080/api/service-requests/my?page=0&size=10" \
 Step 7. Citizen adds a supporting document to that service request
 curl -X POST http://localhost:8080/api/documents \
   -H "Authorization: Bearer <CITIZEN_JWT_TOKEN>" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "serviceRequestId": <SERVICE_REQUEST_ID>,
-    "type": "IDENTIFICATION",
-    "name": "nic-front-scan.pdf",
-    "documentReference": "DOC-REF-001"
-  }'
+  -F "file=@C:/path/to/nic-front-scan.pdf" \
+  -F "serviceRequestId=<SERVICE_REQUEST_ID>" \
+  -F "type=IDENTIFICATION" \
+  -F "name=nic-front-scan.pdf"
 # Save response.id as <DOCUMENT_ID>
 
 Step 8. Login as the Service Agent and copy the JWT token
@@ -183,17 +180,43 @@ curl -X GET http://localhost:8080/api/service-requests/9999 \
 Step 26. Verify citizen cannot attach a document to another citizen's request
 curl -X POST http://localhost:8080/api/documents \
   -H "Authorization: Bearer <CITIZEN_JWT_TOKEN>" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "serviceRequestId": 9999,
-    "type": "IDENTIFICATION",
-    "name": "forbidden-upload.pdf",
-    "documentReference": "FORBIDDEN-REF-001"
-  }'
+  -F "file=@C:/path/to/forbidden-upload.pdf" \
+  -F "serviceRequestId=9999" \
+  -F "type=IDENTIFICATION" \
+  -F "name=forbidden-upload.pdf"
 # Replace `9999` with a real request ID owned by a different citizen.
 # Expected: `403 Forbidden` JSON response.
 
 Step 27. Verify Admin still has privileged access
 curl -X GET "http://localhost:8080/api/citizens?page=0&size=10" \
   -H "Authorization: Bearer <ADMIN_JWT_TOKEN>"
+# Expected: `200 OK`
+
+------------------------------------------------------------------------
+ Non-Functional Verification Flow
+------------------------------------------------------------------------
+
+Step 28. Verify Swagger UI is available
+curl -X GET http://localhost:8080/swagger-ui.html
+# Expected: `200 OK`
+
+Step 29. Verify OpenAPI JSON is available
+curl -X GET http://localhost:8080/v3/api-docs
+# Expected: `200 OK`
+
+Step 30. Verify health endpoint is available
+curl -X GET http://localhost:8080/actuator/health
+# Expected: `200 OK` with `{\"status\":\"UP\"}`
+
+Step 31. Import the Postman collection
+# Import `AI-Aid/GSRP-Backend-Postman-Collection.json` into Postman.
+# Set collection variables: `baseUrl`, `adminToken`, `citizenToken`, `serviceAgentToken`,
+# `citizenId`, `serviceRequestId`, `documentId`, and `notificationId`.
+
+Step 32. Run the full stack with Docker Compose
+docker compose up --build
+# Expected: backend on `http://localhost:8080` and MySQL on `localhost:3306`
+
+Step 33. Verify Dockerized backend health
+curl -X GET http://localhost:8080/actuator/health
 # Expected: `200 OK`

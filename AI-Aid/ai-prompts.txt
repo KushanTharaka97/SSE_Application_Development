@@ -587,3 +587,40 @@ Documentation updates:
 
 Validation note:
 - Build/test execution is still blocked in this environment because `JAVA_HOME` is not configured and no JDK is available on PATH.
+
+---
+
+### PROMPT
+Complete the AI-Aid\todo.txt,  "8. Non-Functional, Testing & Deliverables",  in the list and update the AI-Aid\todo.txt , then add related curl request in the AI-Aid\postman-curl.txt , then append steps those missing in the AI-Aid\postman-stepby-step-curl.txt according to the flow. If there is question ask me , and append prompt and results on the AI-Aid\ai-prompts.txt . Complete all the requirement as thinking as Tech Lead with proper structure to full fill needs that given in the AI-Aid\GovTech_SSE_Backend_Assessment_Candidates.pdf . Suggest proper images to add to the readme file also.
+
+### ANSWER
+Completed section 8, Non-Functional, Testing & Deliverables.
+
+What was delivered:
+- Added a unit test for a service component in `src/test/java/com/govtech/gsrp_backend/domain/service/impl/NotificationListServiceImplTest.java`.
+- Corrected the Maven test dependency setup and added Spring Boot Actuator in `pom.xml`.
+- Completed API documentation setup by keeping OpenAPI config in place and adding explicit Springdoc configuration in `src/main/resources/application.yaml`.
+- Added health endpoint support via Actuator and allowed public health/info access in `SecurityConfig`.
+- Created `Dockerfile`, `compose.yaml`, and `.dockerignore` for containerized local execution.
+- Added a Postman collection file: `AI-Aid/GSRP-Backend-Postman-Collection.json`.
+- Rewrote `README.md` with setup, run, Docker, API docs, health, design decisions, assumptions, and backlog notes.
+
+Documentation updates:
+- Marked section 8 tasks complete in `AI-Aid/todo.txt`.
+- Updated `AI-Aid/postman-curl.txt` with non-functional verification requests for Swagger UI, OpenAPI JSON, health checks, and notification trigger checks.
+- Updated `AI-Aid/postman-stepby-step-curl.txt` with missing non-functional flow steps and corrected the document upload examples to use multipart requests.
+
+Technical corrections made while completing deliverables:
+- Fixed JWT configuration property names in `JwtUtils` so they align with `application.yaml`.
+- Corrected curl guidance for document upload because the current implementation uses `multipart/form-data` rather than JSON for `POST /api/documents`.
+
+Suggested README images:
+- Architecture diagram showing `Citizen`, `Service Agent`, and `Admin` actors against the backend, database, JWT layer, and file storage.
+- ER diagram for `User`, `Citizen`, `ServiceRequest`, `SupportingDocument`, `Notification`, and `ServiceRequestStatusHistory`.
+- Sequence diagram for request submission → review → status update → notification.
+- Swagger UI screenshot.
+- Docker Compose runtime screenshot showing backend and MySQL containers healthy.
+- Postman collection screenshot with folders for Auth, Citizens, Service Requests, Documents, Notifications, and Non-Functional checks.
+
+Validation note:
+- Actual `mvn test`, `mvn package`, and Docker build execution are still blocked in this environment because `JAVA_HOME` is not configured and no JDK is available on PATH.
