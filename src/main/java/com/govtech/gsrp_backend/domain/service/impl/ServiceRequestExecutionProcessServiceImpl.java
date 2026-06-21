@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -114,7 +115,7 @@ public class ServiceRequestExecutionProcessServiceImpl implements ServiceRequest
             if (!request.getCitizenReference().getId().equals(citizen.getId())) {
                 log.warn("Access Denied: Citizen {} attempted to view Service Request {} belonging to Citizen {}", 
                         citizen.getId(), id, request.getCitizenReference().getId());
-                throw new BusinessException("Access Denied: You cannot view other citizens' requests.");
+                throw new AccessDeniedException("You cannot view other citizens' requests.");
             }
         }
 

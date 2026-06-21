@@ -299,6 +299,46 @@ NotificationStatus values from current code:
 - `UNREAD`
 - `READ`
 
+------------------------------------------------------------------------
+11. Security & RBAC Verification Requests
+------------------------------------------------------------------------
+
+11.1. Unauthenticated Access to Protected Profile Endpoint (expected `401 Unauthorized`)
+curl -X GET http://localhost:8080/api/auth/me
+
+11.2. Citizen Tries to Access Admin Endpoint (expected `403 Forbidden`)
+curl -X GET "http://localhost:8080/api/citizens?page=0&size=10" \
+  -H "Authorization: Bearer <CITIZEN_JWT_TOKEN>"
+
+11.3. Citizen Tries to Access Service Agent Document Review Endpoint (expected `403 Forbidden`)
+curl -X GET http://localhost:8080/api/documents/<DOCUMENT_ID> \
+  -H "Authorization: Bearer <CITIZEN_JWT_TOKEN>"
+
+11.4. Service Agent Tries to Delete Document Metadata (expected `403 Forbidden`)
+curl -X DELETE http://localhost:8080/api/documents/<DOCUMENT_ID> \
+  -H "Authorization: Bearer <SERVICE_AGENT_JWT_TOKEN>"
+
+11.5. Citizen Tries to Upload a Document to Another Citizen's Request (expected `403 Forbidden`)
+curl -X POST http://localhost:8080/api/documents \
+  -H "Authorization: Bearer <CITIZEN_JWT_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "serviceRequestId": 9999,
+    "type": "IDENTIFICATION",
+    "name": "forbidden-upload.pdf",
+    "documentReference": "FORBIDDEN-REF-001"
+  }'
+# Replace `9999` with a real service request ID owned by another citizen to verify ownership enforcement.
+
+11.6. Citizen Tries to Read Another Citizen's Service Request (expected `403 Forbidden`)
+curl -X GET http://localhost:8080/api/service-requests/9999 \
+  -H "Authorization: Bearer <CITIZEN_JWT_TOKEN>"
+# Replace `9999` with a real service request ID owned by another citizen.
+
+11.7. Invalid JWT Token on Protected Endpoint (expected `401 Unauthorized`)
+curl -X GET http://localhost:8080/api/notifications/my \
+  -H "Authorization: Bearer invalid.jwt.token"
+
 
 
 ------------------------------------------------------------------------

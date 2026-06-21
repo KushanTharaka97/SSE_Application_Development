@@ -3,6 +3,7 @@ package com.govtech.gsrp_backend.application.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.function.Function;
 
+@Slf4j
 @Component
 public class JwtUtils {
 
@@ -47,7 +49,7 @@ public class JwtUtils {
             Jwts.parser().verifyWith(getSigningKey()).build().parse(authToken);
             return true;
         } catch (Exception e) {
-            // Log error
+            log.warn("Invalid JWT token: {}", e.getMessage());
         }
         return false;
     }

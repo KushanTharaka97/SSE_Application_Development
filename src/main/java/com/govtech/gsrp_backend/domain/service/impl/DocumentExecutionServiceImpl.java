@@ -13,6 +13,7 @@ import com.govtech.gsrp_backend.external.repository.ServiceRequestRepository;
 import com.govtech.gsrp_backend.external.repository.SupportingDocumentRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -71,7 +72,7 @@ public class DocumentExecutionServiceImpl implements DocumentExecutionService {
             log.warn("Access denied: citizen '{}' attempted to upload document for service request ID: {} owned by '{}'",
                     currentUsername, request.getServiceRequestId(),
                     serviceRequest.getCitizenReference().getNic());
-            throw new BusinessException("Access Denied: You can only add documents to your own service requests.");
+            throw new AccessDeniedException("You can only add documents to your own service requests.");
         }
 
         // 3. Persist the file to local storage – returns the unique stored filename

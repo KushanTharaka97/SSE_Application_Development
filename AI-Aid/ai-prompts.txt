@@ -557,3 +557,33 @@ Code review improvement points:
 - Add integration tests for authorization boundaries and ownership rules around citizen requests, documents, and notifications.
 - Align `AI-Aid/database.txt` with the current JPA model; it is still out of sync with current entity/table column naming and does not document the new status history table.
 - Consider pagination for notifications and history endpoints if production-scale data volume is expected.
+
+---
+
+### PROMPT
+Complete the AI-Aid\todo.txt 7. Security & Role-Based Access Control in the list and update the AI-Aid\todo.txt , then add related curl request in the AI-Aid\postman-curl.txt , then append steps those missing in the AI-Aid\postman-stepby-step-curl.txt according to the flow. If there is question ask me , and append prompt and results on the AI-Aid\ai-prompts.txt . Complete all the requirement as thinking as Tech Lead with proper structure to full fill needs that given in the AI-Aid\GovTech_SSE_Backend_Assessment_Candidates.pdf .
+
+### ANSWER
+Completed section 7, Security & Role-Based Access Control.
+
+What was hardened:
+- Tightened HTTP security so only `POST /api/auth/login` and `POST /api/auth/register` remain public.
+- Removed the broad public allowance on `/api/auth/**`, so `/api/auth/me` is now protected at the HTTP layer as well as the method layer.
+- Kept role restrictions aligned with the implemented controllers:
+  - `ADMIN` for privileged management endpoints such as `/api/citizens`, `/api/documents/{id}` delete, `/api/service-requests/{id}` delete, and `/api/auth/admin/register`.
+  - `SERVICE_AGENT` for review/update endpoints such as document read/update and service request history.
+  - `CITIZEN` for self-service endpoints such as `/api/service-requests/my`, `/api/documents` create, and `/api/notifications/my`.
+- Converted ownership violations to real authorization failures (`403 Forbidden`) instead of generic business-validation failures.
+
+Error response improvements:
+- Added structured JSON error responses for `401 Unauthorized`, `403 Forbidden`, validation failures, business rule violations, and unexpected server errors.
+- Added a dedicated JWT authentication entry point and access-denied handler so invalid or missing tokens now return proper JSON responses consistently.
+- Added JWT/filter warning logs to improve traceability for invalid access attempts.
+
+Documentation updates:
+- Marked tasks 7.1 to 7.4 complete in `AI-Aid/todo.txt`.
+- Appended RBAC verification curl examples to `AI-Aid/postman-curl.txt`.
+- Appended missing negative-path and role-verification steps to `AI-Aid/postman-stepby-step-curl.txt`.
+
+Validation note:
+- Build/test execution is still blocked in this environment because `JAVA_HOME` is not configured and no JDK is available on PATH.

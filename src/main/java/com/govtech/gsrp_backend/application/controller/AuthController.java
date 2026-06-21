@@ -44,6 +44,7 @@ public class AuthController {
     }
 
     @GetMapping("/me")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getCurrentUser() {
         log.info("Received request to fetch current authenticated user profile.");
         JwtResponse response = authService.getCurrentUser();

@@ -140,3 +140,60 @@ curl -X DELETE http://localhost:8080/api/documents/<DOCUMENT_ID> \
 Step 18. Admin cancels the service request
 curl -X DELETE http://localhost:8080/api/service-requests/<SERVICE_REQUEST_ID> \
   -H "Authorization: Bearer <ADMIN_JWT_TOKEN>"
+
+------------------------------------------------------------------------
+ Security & RBAC Verification Flow
+------------------------------------------------------------------------
+
+Step 19. Verify unauthenticated access is blocked
+curl -X GET http://localhost:8080/api/auth/me
+# Expected: `401 Unauthorized` JSON response.
+
+Step 20. Citizen verifies own protected access still works
+curl -X GET http://localhost:8080/api/notifications/my \
+  -H "Authorization: Bearer <CITIZEN_JWT_TOKEN>"
+# Expected: `200 OK`
+
+Step 21. Citizen tries to call an Admin-only endpoint
+curl -X GET "http://localhost:8080/api/citizens?page=0&size=10" \
+  -H "Authorization: Bearer <CITIZEN_JWT_TOKEN>"
+# Expected: `403 Forbidden` JSON response.
+
+Step 22. Citizen tries to call a Service-Agent-only endpoint
+curl -X GET http://localhost:8080/api/documents/<DOCUMENT_ID> \
+  -H "Authorization: Bearer <CITIZEN_JWT_TOKEN>"
+# Expected: `403 Forbidden` JSON response.
+
+Step 23. Service Agent tries to call an Admin-only delete endpoint
+curl -X DELETE http://localhost:8080/api/documents/<DOCUMENT_ID> \
+  -H "Authorization: Bearer <SERVICE_AGENT_JWT_TOKEN>"
+# Expected: `403 Forbidden` JSON response.
+
+Step 24. Verify invalid JWT token is rejected
+curl -X GET http://localhost:8080/api/notifications/my \
+  -H "Authorization: Bearer invalid.jwt.token"
+# Expected: `401 Unauthorized` JSON response.
+
+Step 25. Verify citizen cannot access another citizen's request
+curl -X GET http://localhost:8080/api/service-requests/9999 \
+  -H "Authorization: Bearer <CITIZEN_JWT_TOKEN>"
+# Replace `9999` with a real request ID owned by a different citizen.
+# Expected: `403 Forbidden` JSON response.
+
+Step 26. Verify citizen cannot attach a document to another citizen's request
+curl -X POST http://localhost:8080/api/documents \
+  -H "Authorization: Bearer <CITIZEN_JWT_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "serviceRequestId": 9999,
+    "type": "IDENTIFICATION",
+    "name": "forbidden-upload.pdf",
+    "documentReference": "FORBIDDEN-REF-001"
+  }'
+# Replace `9999` with a real request ID owned by a different citizen.
+# Expected: `403 Forbidden` JSON response.
+
+Step 27. Verify Admin still has privileged access
+curl -X GET "http://localhost:8080/api/citizens?page=0&size=10" \
+  -H "Authorization: Bearer <ADMIN_JWT_TOKEN>"
+# Expected: `200 OK`
