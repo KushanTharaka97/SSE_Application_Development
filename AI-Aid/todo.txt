@@ -66,3 +66,4 @@ PROJECT BACKLOG (From GovTech_SSE_Backend_Assessment_Candidates.pdf)
 [ ] Task 8.3: Export and provide a working Postman Collection for testing all APIs.
 [ ] Task 8.4: Create Docker Compose config to spin up the application and DB easily.
 [ ] Task 8.5: Write comprehensive README file with setup instructions, run instructions, design decisions, and assumptions.
+[ ] Task 8.7 - custom : update the proper README.md file here and add content for that.
