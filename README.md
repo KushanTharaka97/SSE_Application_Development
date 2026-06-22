@@ -357,9 +357,9 @@ Run tests:
 
 ## Postman and Curl Assets
 
-- Collection: `AI-Aid/GSRP-Backend-Postman-Collection.json`
-- Curl guide: `AI-Aid/postman-curl.txt`
-- Step-by-step flow: `AI-Aid/postman-stepby-step-curl.txt`
+- Collection: [`docs/postman-collection/SSE_Assignment_kushan.postman_collection.json`](docs/postman-collection/SSE_Assignment_kushan.postman_collection.json)
+- Curl guide: [`docs/curl/postman-curl.txt`](docs/curl/postman-curl.txt)
+- Step-by-step flow: [`docs/curl/postman-stepby-step-curl.txt`](docs/curl/postman-stepby-step-curl.txt)
 
 ## Design Decisions
 
@@ -382,12 +382,4 @@ Run tests:
 - Citizens authenticate using the NIC-based account created during citizen profile creation
 - Local file-system storage is acceptable for assessment scope
 
-## Suggested Images for README
 
-Use these images to make the repository easier to evaluate:
-- **Architecture Diagram** — actors (`Citizen`, `Service Agent`, `Admin`) to backend to MySQL/file storage/JWT
-- **ER Diagram** — `User`, `Citizen`, `ServiceRequest`, `SupportingDocument`, `Notification`, `ServiceRequestStatusHistory`
-- **Sequence Diagram** — citizen request submission → agent review → notification generation
-- **Swagger UI Screenshot** — visible API documentation
-- **Docker Compose Runtime Screenshot** — backend and MySQL containers healthy
-- **Postman Collection Screenshot** — organized folders for Auth, Citizens, Requests, Documents, Notifications
