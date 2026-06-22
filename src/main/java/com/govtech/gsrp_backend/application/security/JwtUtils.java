@@ -3,6 +3,7 @@ package com.govtech.gsrp_backend.application.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -18,11 +19,18 @@ import java.util.function.Function;
 @Component
 public class JwtUtils {
 
-    @Value("${gsrp.jwt.secret:secretKeyWithAtLeast32CharactersForHS256Algorithm}")
+    @Value("${jwt.secret}")
     private String jwtSecret;
 
-    @Value("${gsrp.jwt.expiration:86400000}")
+    @Value("${jwt.expiration-ms:86400000}")
     private int jwtExpirationMs;
+
+    @PostConstruct
+    void validateConfiguration() {
+        if (jwtSecret == null || jwtSecret.isBlank() || jwtSecret.length() < 32) {
+            throw new IllegalStateException("jwt.secret must be configured and contain at least 32 characters.");
+        }
+    }
 
     public String generateJwtToken(Authentication authentication) {
         UserDetails userPrincipal = (UserDetails) authentication.getPrincipal();

@@ -61,8 +61,128 @@ PROJECT BACKLOG (From GovTech_SSE_Backend_Assessment_Candidates.pdf)
 [✅] Task 7.4: Ensure unauthorized or invalid access attempts return appropriate error responses.
 
 8. Non-Functional, Testing & Deliverables
-[ ] Task 8.1: Implement Unit and/or Integration tests for at least one service component.
-[ ] Task 8.2: Set up API documentation (Swagger/OpenAPI UI integration).
-[ ] Task 8.3: Export and provide a working Postman Collection for testing all APIs.
-[ ] Task 8.4: Create Docker Compose config to spin up the application and DB easily.
-[ ] Task 8.5: Write comprehensive README file with setup instructions, run instructions, design decisions, and assumptions.
+[✅] Task 8.1: Implement Unit and/or Integration tests for at least one service component.
+[✅] Task 8.2: Set up API documentation (Swagger/OpenAPI UI integration).
+[✅] Task 8.3: Export and provide a working Postman Collection for testing all APIs.
+[✅] Task 8.4: Create Docker Compose config to spin up the application and DB easily.
+[✅] Task 8.5: Write comprehensive README file with setup instructions, run instructions, design decisions, and assumptions.
+[✅] Task 8.7 - custom : update the proper README.md file here and add content for that.
+
+==================================================
+SENIOR / TECH LEAD UPGRADE ROADMAP
+==================================================
+
+9. Architecture & Codebase Consistency
+[✅] Task 9.1: Consolidate duplicate role definitions into one source of truth and remove architectural drift between `domain.enums` and `domain.util`.
+[ ] Task 9.2: Standardize package boundaries so `application`, `domain`, and `external` layers have clear responsibilities and no leakage.
+[✅] Task 9.3: Replace field injection (`@Autowired`) with constructor injection across controllers, services, security, and config classes.
+[✅] Task 9.4: Remove dead code, stale comments, duplicate endpoint patterns, and naming inconsistencies in controllers and services.
+[ ] Task 9.5: Define and document an explicit architectural style for the codebase (layered or hexagonal) and refactor toward it consistently.
+
+10. Security & Identity Maturity
+[ ] Task 10.1: Introduce proper bootstrap strategy for the first ADMIN user instead of relying on out-of-band assumptions.
+[✅] Task 10.2: Move all secrets and security-sensitive defaults to environment-driven configuration and remove weak development fallbacks.
+[ ] Task 10.3: Add token expiry, invalid token, forbidden access, and ownership-access integration tests for critical protected endpoints.
+[ ] Task 10.4: Add audit logging policy for authentication, authorization failures, status changes, and privileged operations.
+[ ] Task 10.5: Review password lifecycle strategy (initial citizen password, reset/change flow, account disable policy) and implement production-safe behavior.
+
+11. Domain Model & Persistence Quality
+[✅] Task 11.1: Align `AI-Aid/database.txt` and any SQL support files with the actual JPA model, including `ServiceRequestStatusHistory`.
+[ ] Task 11.2: Introduce schema versioning with Flyway or Liquibase instead of relying only on `ddl-auto=update`.
+[ ] Task 11.3: Add database constraints, indexes, and uniqueness rules explicitly based on query patterns and business rules.
+[ ] Task 11.4: Review entity relationships, fetch strategies, and transaction boundaries to reduce lazy-loading and N+1 risks.
+[ ] Task 11.5: Separate persistence models from API contracts rigorously and ensure entities are never exposed directly.
+
+12. API Contract & Error Handling Excellence
+[✅] Task 12.1: Standardize success and error response models across all endpoints, including validation, business, auth, and server errors.
+[ ] Task 12.2: Add pagination and sorting standards consistently to list endpoints such as notifications, requests, and citizens.
+[ ] Task 12.3: Review endpoint naming consistency, especially document-related routes, and normalize REST semantics across controllers.
+[ ] Task 12.4: Add request/response examples and response code documentation to OpenAPI for all major endpoints.
+[✅] Task 12.5: Validate multipart upload API documentation and keep curl/Postman/Swagger examples aligned with actual controller signatures.
+
+13. Testing Strategy to Senior Level
+[ ] Task 13.1: Add unit tests for service layers covering happy path, validation failures, access control failures, and edge cases.
+[ ] Task 13.2: Add controller/integration tests for all role-sensitive endpoints using Spring Security test support.
+[ ] Task 13.3: Add repository-level tests for custom queries, filtering, and ordering behavior.
+[ ] Task 13.4: Add end-to-end scenario tests for the main platform flows: citizen request submission, document upload, status update, notification, and admin cancellation.
+[ ] Task 13.5: Set a target coverage baseline for business-critical modules and enforce it in CI.
+
+14. Operational Readiness & Delivery Maturity
+[ ] Task 14.1: Add environment profiles (`dev`, `test`, `prod`) and document the config strategy for each.
+[ ] Task 14.2: Extend Actuator exposure and readiness/liveness strategy appropriately for containerized deployments.
+[ ] Task 14.3: Add CI pipeline definition for build, test, static analysis, and packaging verification.
+[ ] Task 14.4: Add centralized logging conventions and correlation/audit-friendly log fields for operational troubleshooting.
+[ ] Task 14.5: Review file upload storage strategy and define migration path from local disk to object storage for production environments.
+
+15. Engineering Quality & Maintainability
+[ ] Task 15.1: Add formatting, linting, and static analysis standards (Checkstyle/Spotless/PMD/Sonar-ready rules) and document them.
+[ ] Task 15.2: Introduce mapper strategy (manual or MapStruct) to reduce repetitive DTO mapping logic and improve maintainability.
+[ ] Task 15.3: Reduce service class complexity by extracting reusable domain policies, validators, and helper components.
+[ ] Task 15.4: Add ADR-style design notes for key choices: auth model, status history model, file storage model, and deletion strategy.
+[ ] Task 15.5: Review and improve naming, comments, and documentation so the codebase reads consistently at senior-engineer quality.
+
+16. Tech Lead Completion Gate
+[ ] Task 16.1: Run a full architecture review against security, maintainability, scalability, operability, and testability criteria.
+[✅] Task 16.2: Ensure code, README, SQL docs, Docker setup, Postman collection, and curl guides are fully synchronized with the implementation.
+[ ] Task 16.3: Remove all known drift items and informal assumptions before final submission.
+[ ] Task 16.4: Prepare a final reviewer-facing walkthrough: architecture overview, tradeoffs, risks, and future roadmap.
+
+==================================================
+PHASE-WISE EXECUTION ORDER FOR SENIOR / TECH LEAD LEVEL
+==================================================
+
+Phase 1: Submission-Critical Stabilization (Do First)
+Goal: remove architectural drift, security ambiguity, and documentation mismatch before deeper refactors.
+[✅] Phase 1.1: Complete Task 9.1 - consolidate duplicate role definitions.
+[✅] Phase 1.2: Complete Task 9.3 - replace field injection with constructor injection.
+[✅] Phase 1.3: Complete Task 9.4 - remove dead code, stale comments, and endpoint inconsistency.
+[✅] Phase 1.4: Complete Task 10.2 - move secrets and weak defaults to proper environment configuration.
+[✅] Phase 1.5: Complete Task 11.1 - align `AI-Aid/database.txt` and SQL support docs with the implemented JPA model.
+[✅] Phase 1.6: Complete Task 12.1 - standardize success/error response contracts.
+[✅] Phase 1.7: Complete Task 12.5 - align multipart upload docs, curl, Postman, and Swagger with code.
+[✅] Phase 1.8: Complete Task 16.2 - synchronize code, docs, SQL notes, Docker, and API testing assets.
+
+Phase 2: Senior-Level Engineering Quality
+Goal: raise the codebase from feature-complete to professionally maintainable and testable.
+[ ] Phase 2.1: Complete Task 9.2 - enforce package/layer boundaries.
+[ ] Phase 2.2: Complete Task 11.5 - ensure strict separation between persistence models and API contracts.
+[ ] Phase 2.3: Complete Task 12.2 - standardize pagination/sorting contracts.
+[ ] Phase 2.4: Complete Task 12.3 - normalize REST endpoint semantics.
+[ ] Phase 2.5: Complete Task 13.1 - expand unit tests across service layers.
+[ ] Phase 2.6: Complete Task 13.2 - add controller/integration tests for role-sensitive endpoints.
+[ ] Phase 2.7: Complete Task 13.3 - add repository tests for custom query behavior.
+[ ] Phase 2.8: Complete Task 15.2 - introduce a mapping strategy to reduce repetitive DTO conversion code.
+[ ] Phase 2.9: Complete Task 15.3 - extract validators, policies, and reusable domain helpers.
+[ ] Phase 2.10: Complete Task 15.5 - improve naming, comments, and code readability to senior-level quality.
+
+Phase 3: Architectural & Operational Maturity
+Goal: make the system read like a production-minded backend rather than only an assessment submission.
+[ ] Phase 3.1: Complete Task 9.5 - define and document the target architecture explicitly.
+[ ] Phase 3.2: Complete Task 10.1 - implement proper initial ADMIN bootstrap strategy.
+[ ] Phase 3.3: Complete Task 10.4 - define audit logging policy.
+[ ] Phase 3.4: Complete Task 10.5 - redesign password/reset/account lifecycle safely.
+[ ] Phase 3.5: Complete Task 11.2 - introduce Flyway or Liquibase migrations.
+[ ] Phase 3.6: Complete Task 11.3 - formalize DB constraints and indexes.
+[ ] Phase 3.7: Complete Task 11.4 - review fetch strategies and transaction boundaries.
+[ ] Phase 3.8: Complete Task 14.1 - introduce `dev`, `test`, and `prod` profiles.
+[ ] Phase 3.9: Complete Task 14.2 - improve health/readiness/liveness strategy.
+[ ] Phase 3.10: Complete Task 14.4 - standardize operational logging.
+[ ] Phase 3.11: Complete Task 14.5 - define file storage migration path for production.
+[ ] Phase 3.12: Complete Task 15.4 - add ADR-style design notes.
+
+Phase 4: Tech Lead Submission Gate
+Goal: finish with reviewer-facing completeness, measurable quality, and delivery discipline.
+[ ] Phase 4.1: Complete Task 10.3 - add auth/ownership integration coverage for critical protected endpoints.
+[ ] Phase 4.2: Complete Task 12.4 - enrich OpenAPI with examples and response codes.
+[ ] Phase 4.3: Complete Task 13.4 - add end-to-end scenario coverage for the main platform workflows.
+[ ] Phase 4.4: Complete Task 13.5 - define and enforce test coverage baseline in CI.
+[ ] Phase 4.5: Complete Task 14.3 - add CI pipeline for build, test, static analysis, and packaging.
+[ ] Phase 4.6: Complete Task 15.1 - add formatting/lint/static-analysis rules.
+[ ] Phase 4.7: Complete Task 16.1 - run final architecture review.
+[ ] Phase 4.8: Complete Task 16.3 - remove all known drift and informal assumptions.
+[ ] Phase 4.9: Complete Task 16.4 - prepare final reviewer-facing walkthrough.
+
+Recommended execution rule:
+- Do not start Phase 2 before Phase 1 drift items are clean.
+- Do not start Phase 4 before test, migration, and operational maturity tasks are in place.
+- Use each phase as a commit/review milestone rather than mixing all concerns at once.

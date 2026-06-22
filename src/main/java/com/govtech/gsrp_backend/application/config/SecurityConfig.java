@@ -4,7 +4,7 @@ import com.govtech.gsrp_backend.application.security.AuthTokenFilter;
 import com.govtech.gsrp_backend.application.security.CustomAccessDeniedHandler;
 import com.govtech.gsrp_backend.application.security.CustomUserDetailsService;
 import com.govtech.gsrp_backend.application.security.JwtAuthenticationEntryPoint;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -23,19 +23,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
-    @Autowired
-    private CustomUserDetailsService userDetailsService;
-
-    @Autowired
-    private AuthTokenFilter authTokenFilter;
-
-    @Autowired
-    private JwtAuthenticationEntryPoint authenticationEntryPoint;
-
-    @Autowired
-    private CustomAccessDeniedHandler accessDeniedHandler;
+    private final CustomUserDetailsService userDetailsService;
+    private final AuthTokenFilter authTokenFilter;
+    private final JwtAuthenticationEntryPoint authenticationEntryPoint;
+    private final CustomAccessDeniedHandler accessDeniedHandler;
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
@@ -64,6 +58,7 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/register").permitAll()
+                .requestMatchers(HttpMethod.GET, "/actuator/health", "/actuator/info").permitAll()
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                 .anyRequest().authenticated()
             );

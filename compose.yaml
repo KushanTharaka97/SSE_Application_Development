@@ -1,0 +1,42 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: gsrp-mysql
+    environment:
+      MYSQL_DATABASE: gsrp_db
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: gsrp_user
+      MYSQL_PASSWORD: gsrp_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gsrp-backend
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/gsrp_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+      DB_USERNAME: gsrp_user
+      DB_PASSWORD: gsrp_password
+      JWT_SECRET: changeThisJwtSecretKeyBeforeProductionDeployment123
+      JWT_EXPIRATION_MS: 86400000
+      FILE_UPLOAD_DIR: /app/uploads/documents
+    ports:
+      - "8080:8080"
+    volumes:
+      - uploads_data:/app/uploads/documents
+
+volumes:
+  mysql_data:
+  uploads_data:

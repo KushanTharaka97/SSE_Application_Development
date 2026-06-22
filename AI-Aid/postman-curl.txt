@@ -4,6 +4,8 @@ GovTech GSRP - Authentication & Citizen Management API CURL Requests
 
 Note: Replace <JWT_TOKEN_HERE> with the actual JWT token returned in the /api/auth/login response.
 Assume server is running on http://localhost:8080.
+All successful responses use the standard envelope: `timestamp`, `status`, `message`, `data`.
+Read IDs and tokens from `response.data`.
 
 ------------------------------------------------------------------------
 1. Authentication Endpoints
@@ -152,17 +154,14 @@ curl -X DELETE http://localhost:8080/api/service-requests/1 \
 4. Supporting Document Management Endpoints
 ------------------------------------------------------------------------
 
-4.1. Citizen Adds Supporting Document Metadata (requires CITIZEN role JWT)
+4.1. Citizen Uploads Supporting Document (requires CITIZEN role JWT)
 # Rule: citizen can add documents only to their own service request.
 curl -X POST http://localhost:8080/api/documents \
   -H "Authorization: Bearer <CITIZEN_JWT_TOKEN>" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "serviceRequestId": 1,
-    "type": "IDENTIFICATION",
-    "name": "nic-front-scan.pdf",
-    "documentReference": "DOC-REF-001"
-  }'
+  -F "file=@C:/path/to/nic-front-scan.pdf" \
+  -F "serviceRequestId=1" \
+  -F "type=IDENTIFICATION" \
+  -F "name=nic-front-scan.pdf"
 
 4.2. Service Agent Views Supporting Document by ID (requires SERVICE_AGENT role JWT)
 curl -X GET http://localhost:8080/api/documents/1 \
@@ -256,15 +255,15 @@ curl -X DELETE http://localhost:8080/api/service-requests/1 \
 6. Notification & Status Tracking Endpoints
 ------------------------------------------------------------------------
 
-8.1. Citizen Views Their Notifications (requires CITIZEN role JWT)
+6.1. Citizen Views Their Notifications (requires CITIZEN role JWT)
 curl -X GET http://localhost:8080/api/notifications/my \
   -H "Authorization: Bearer <CITIZEN_JWT_TOKEN>"
 
-8.2. Citizen Marks a Notification as Read (requires CITIZEN role JWT)
+6.2. Citizen Marks a Notification as Read (requires CITIZEN role JWT)
 curl -X PATCH http://localhost:8080/api/notifications/<NOTIFICATION_ID>/read \
   -H "Authorization: Bearer <CITIZEN_JWT_TOKEN>"
 
-8.3. Service Agent Views Service Request Status History (requires SERVICE_AGENT role JWT)
+6.3. Service Agent Views Service Request Status History (requires SERVICE_AGENT role JWT)
 curl -X GET http://localhost:8080/api/service-requests/<SERVICE_REQUEST_ID>/history \
   -H "Authorization: Bearer <SERVICE_AGENT_JWT_TOKEN>"
 
@@ -321,13 +320,10 @@ curl -X DELETE http://localhost:8080/api/documents/<DOCUMENT_ID> \
 11.5. Citizen Tries to Upload a Document to Another Citizen's Request (expected `403 Forbidden`)
 curl -X POST http://localhost:8080/api/documents \
   -H "Authorization: Bearer <CITIZEN_JWT_TOKEN>" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "serviceRequestId": 9999,
-    "type": "IDENTIFICATION",
-    "name": "forbidden-upload.pdf",
-    "documentReference": "FORBIDDEN-REF-001"
-  }'
+  -F "file=@C:/path/to/forbidden-upload.pdf" \
+  -F "serviceRequestId=9999" \
+  -F "type=IDENTIFICATION" \
+  -F "name=forbidden-upload.pdf"
 # Replace `9999` with a real service request ID owned by another citizen to verify ownership enforcement.
 
 11.6. Citizen Tries to Read Another Citizen's Service Request (expected `403 Forbidden`)
@@ -338,6 +334,32 @@ curl -X GET http://localhost:8080/api/service-requests/9999 \
 11.7. Invalid JWT Token on Protected Endpoint (expected `401 Unauthorized`)
 curl -X GET http://localhost:8080/api/notifications/my \
   -H "Authorization: Bearer invalid.jwt.token"
+
+------------------------------------------------------------------------
+12. Non-Functional & Deliverables Verification Requests
+------------------------------------------------------------------------
+
+12.1. Swagger UI Availability Check
+curl -X GET http://localhost:8080/swagger-ui.html
+
+12.2. OpenAPI JSON Availability Check
+curl -X GET http://localhost:8080/v3/api-docs
+
+12.3. Actuator Health Check
+curl -X GET http://localhost:8080/actuator/health
+
+12.4. Dockerized Application Health Check
+curl -X GET http://localhost:8080/actuator/health
+# Use after `docker compose up --build`
+
+12.5. Notification Service Test Trigger
+curl -X PATCH http://localhost:8080/api/service-requests/<SERVICE_REQUEST_ID>/status \
+  -H "Authorization: Bearer <SERVICE_AGENT_JWT_TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "status": "APPROVED"
+  }'
+# Use this before checking `GET /api/notifications/my` to validate end-to-end notification flow.
 
 
 

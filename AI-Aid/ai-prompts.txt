@@ -587,3 +587,145 @@ Documentation updates:
 
 Validation note:
 - Build/test execution is still blocked in this environment because `JAVA_HOME` is not configured and no JDK is available on PATH.
+
+---
+
+### PROMPT
+Complete the AI-Aid\todo.txt,  "8. Non-Functional, Testing & Deliverables",  in the list and update the AI-Aid\todo.txt , then add related curl request in the AI-Aid\postman-curl.txt , then append steps those missing in the AI-Aid\postman-stepby-step-curl.txt according to the flow. If there is question ask me , and append prompt and results on the AI-Aid\ai-prompts.txt . Complete all the requirement as thinking as Tech Lead with proper structure to full fill needs that given in the AI-Aid\GovTech_SSE_Backend_Assessment_Candidates.pdf . Suggest proper images to add to the readme file also.
+
+### ANSWER
+Completed section 8, Non-Functional, Testing & Deliverables.
+
+What was delivered:
+- Added a unit test for a service component in `src/test/java/com/govtech/gsrp_backend/domain/service/impl/NotificationListServiceImplTest.java`.
+- Corrected the Maven test dependency setup and added Spring Boot Actuator in `pom.xml`.
+- Completed API documentation setup by keeping OpenAPI config in place and adding explicit Springdoc configuration in `src/main/resources/application.yaml`.
+- Added health endpoint support via Actuator and allowed public health/info access in `SecurityConfig`.
+- Created `Dockerfile`, `compose.yaml`, and `.dockerignore` for containerized local execution.
+- Added a Postman collection file: `AI-Aid/GSRP-Backend-Postman-Collection.json`.
+- Rewrote `README.md` with setup, run, Docker, API docs, health, design decisions, assumptions, and backlog notes.
+
+Documentation updates:
+- Marked section 8 tasks complete in `AI-Aid/todo.txt`.
+- Updated `AI-Aid/postman-curl.txt` with non-functional verification requests for Swagger UI, OpenAPI JSON, health checks, and notification trigger checks.
+- Updated `AI-Aid/postman-stepby-step-curl.txt` with missing non-functional flow steps and corrected the document upload examples to use multipart requests.
+
+Technical corrections made while completing deliverables:
+- Fixed JWT configuration property names in `JwtUtils` so they align with `application.yaml`.
+- Corrected curl guidance for document upload because the current implementation uses `multipart/form-data` rather than JSON for `POST /api/documents`.
+
+Suggested README images:
+- Architecture diagram showing `Citizen`, `Service Agent`, and `Admin` actors against the backend, database, JWT layer, and file storage.
+- ER diagram for `User`, `Citizen`, `ServiceRequest`, `SupportingDocument`, `Notification`, and `ServiceRequestStatusHistory`.
+- Sequence diagram for request submission → review → status update → notification.
+- Swagger UI screenshot.
+- Docker Compose runtime screenshot showing backend and MySQL containers healthy.
+- Postman collection screenshot with folders for Auth, Citizens, Service Requests, Documents, Notifications, and Non-Functional checks.
+
+Validation note:
+- Actual `mvn test`, `mvn package`, and Docker build execution are still blocked in this environment because `JAVA_HOME` is not configured and no JDK is available on PATH.
+
+---
+
+### PROMPT
+I need to make this code as tech lead or senior level code in above features, generate todo list on AI-Aid\todo.txt  that what should I follow to achieve that level here. Think as a achitecturer and generate the new sections regarding this.
+
+### ANSWER
+Added a new architect-level upgrade roadmap to `AI-Aid/todo.txt`.
+
+New sections added:
+- `9. Architecture & Codebase Consistency`
+- `10. Security & Identity Maturity`
+- `11. Domain Model & Persistence Quality`
+- `12. API Contract & Error Handling Excellence`
+- `13. Testing Strategy to Senior Level`
+- `14. Operational Readiness & Delivery Maturity`
+- `15. Engineering Quality & Maintainability`
+- `16. Tech Lead Completion Gate`
+
+Purpose of the roadmap:
+- Move the project from feature-complete assessment code toward consistent senior/tech-lead level engineering quality.
+- Address architectural drift, testing depth, persistence discipline, API contract quality, operational maturity, and reviewer-facing completeness.
+- Provide an ordered backlog that can be executed incrementally without losing sight of the final architectural standard.
+
+---
+
+### PROMPT
+Do phase wise fixing here.
+
+### ANSWER
+Restructured the senior/tech-lead roadmap into a phase-wise execution order in `AI-Aid/todo.txt`.
+
+Phases added:
+- `Phase 1: Submission-Critical Stabilization`
+- `Phase 2: Senior-Level Engineering Quality`
+- `Phase 3: Architectural & Operational Maturity`
+- `Phase 4: Tech Lead Submission Gate`
+
+Intent of the phases:
+- Phase 1 removes the biggest drift and correctness risks first.
+- Phase 2 raises maintainability, consistency, and test quality to senior-engineer level.
+- Phase 3 focuses on architectural discipline and production-minded operational maturity.
+- Phase 4 acts as the final tech-lead quality gate before reviewer-facing submission.
+
+---
+
+### PROMPT
+In the AI-Aid\todo.txt , execute Phase 1: Submission-Critical Stabilization (Do First) as think of like senior level tech lead. For the use cases read AI-Aid\GovTech_SSE_Backend_Assessment_Candidates.pdf , all the prompts that I used on AI-Aid\ai-prompts.txt , all the requests are in the AI-Aid\postman-stepby-step-curl.txt
+
+### ANSWER
+Completed Phase 1, Submission-Critical Stabilization.
+
+Code-level stabilization completed:
+- Consolidated role usage to `domain.enums.Role` and removed the duplicate `domain.util.Role`.
+- Replaced remaining field injection with constructor injection across controllers, services, security, and config classes.
+- Removed the duplicate document listing route from `DocumentController` and kept service-request document listing under `GET /api/service-requests/{id}/documents`.
+- Standardized successful API responses with `ApiSuccessResponse` and `ApiResponseFactory` so controllers now return a consistent `timestamp` / `status` / `message` / `data` envelope.
+- Kept structured error responses in place for validation, business, auth, and access-control failures.
+
+Security/config stabilization completed:
+- Removed weak fallbacks for `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`, and `JWT_SECRET` from `src/main/resources/application.yaml`.
+- Added startup-time JWT configuration validation in `src/main/java/com/govtech/gsrp_backend/application/security/JwtUtils.java` so the app fails fast if `jwt.secret` is missing or shorter than 32 characters.
+
+Documentation and SQL synchronization completed:
+- Rewrote `AI-Aid/database.txt` to match the actual JPA model, including `users`, `user_roles`, `supporting_documents`, `notifications`, and `service_request_status_history`.
+- Rewrote `AI-Aid/data.txt` so sample SQL uses the actual enum values and current column names.
+- Updated `README.md` to remove stale document endpoints, document the standardized response envelope, and show the required local environment variables.
+- Updated `AI-Aid/postman-stepby-step-curl.txt` so token/ID extraction uses `response.data.*`.
+- Updated `AI-Aid/postman-curl.txt` to reflect the standard response wrapper and corrected notification section numbering.
+- Marked Phase 1 and the linked roadmap tasks complete in `AI-Aid/todo.txt`.
+
+Validation note:
+- Static code and documentation review is complete.
+- Build/test execution remains blocked in this environment because `JAVA_HOME` is not configured and no JDK is available on PATH.
+
+---
+
+### PROMPT
+Review my "docs\ diagrams" folder three mermaid diagrams and tell me if is there any issue and resolve the code level issue, then put images into the proper places in README.md , What is the issue with the Swagger level: "Failed to load API definition."
+
+### ANSWER
+Reviewed and corrected the Mermaid diagrams and README visual asset structure.
+
+Diagram issues found:
+- The original Mermaid files in `docs\ diagrams` were not valid `.mmd` source files; they contained Markdown headings, code fences, and unrelated prose instead of pure Mermaid syntax.
+- The `sequence.mmd` file also contained extra README guidance text after the diagram, which breaks Mermaid parsing.
+- The folder name `docs\ diagrams` contained a leading space and is not a clean repository path for long-term use.
+
+What was fixed:
+- Created clean Mermaid source files in `docs/diagrams/architecture.mmd`, `docs/diagrams/er-diagram.mmd`, and `docs/diagrams/sequence.mmd`.
+- Updated `README.md` to render the Architecture, ER, and Sequence diagrams directly with Mermaid blocks.
+- Copied the Postman screenshot into the clean documentation path `docs/images/postman/postman-first-login-request.png`.
+- Added an `Evaluation Screenshots` section in `README.md` and wired the Postman screenshot into it.
+- Documented the recommended screenshot paths for Swagger, Docker, and Postman collection overview.
+
+Swagger issue analysis:
+- `Failed to load API definition` typically means `/v3/api-docs` is returning an error rather than valid OpenAPI JSON.
+- In this project, the likely root cause is a Springdoc compatibility mismatch: the project uses Spring Boot `4.1.0` while `pom.xml` was pinned to `springdoc-openapi-starter-webmvc-ui:2.5.0`, which is too old for the current framework stack.
+
+Code-level Swagger fix applied:
+- Updated `pom.xml` to use `springdoc-openapi-starter-webmvc-ui:2.7.0`, which is available in the local Maven cache and is the better compatibility target for the current stack.
+
+Follow-up recommendation:
+- Rebuild cleanly and test `GET /v3/api-docs` directly after restarting the app.
+- If Swagger still fails after the dependency update, inspect the exact `/v3/api-docs` server error because that would indicate a controller/schema generation problem rather than the Springdoc version mismatch.

@@ -11,8 +11,8 @@ import com.govtech.gsrp_backend.domain.enums.VerificationStatus;
 import com.govtech.gsrp_backend.domain.service.DocumentExecutionService;
 import com.govtech.gsrp_backend.external.repository.ServiceRequestRepository;
 import com.govtech.gsrp_backend.external.repository.SupportingDocumentRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,83 +20,48 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-/**
- * Implementation of {@link DocumentExecutionService}.
- *
- * <p>Upload flow for {@code createDocument}:
- * <ol>
- *   <li>Validate that the referenced Service Request exists and belongs to the calling citizen.</li>
- *   <li>Delegate file persistence to {@link FileStorageService}, which returns a unique filename.</li>
- *   <li>Persist the document metadata (including the stored filename as {@code documentReference}) to the DB.</li>
- * </ol>
- *
- * <p>On deletion, the physical file is removed from disk before the DB record is deleted
- * to prevent orphaned files accumulating in the upload directory.
- */
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class DocumentExecutionServiceImpl implements DocumentExecutionService {
 
-    @Autowired
-    private SupportingDocumentRepository supportingDocumentRepository;
-
-    @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
-
-    @Autowired
-    private FileStorageService fileStorageService;
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // Create
-    // ─────────────────────────────────────────────────────────────────────────
+    private final SupportingDocumentRepository supportingDocumentRepository;
+    private final ServiceRequestRepository serviceRequestRepository;
+    private final FileStorageService fileStorageService;
 
     @Override
     @Transactional
-    public DocumentResponse createDocument(DocumentCreateRequest request,
-                                           MultipartFile file,
-                                           String currentUsername) {
-
+    public DocumentResponse createDocument(DocumentCreateRequest request, MultipartFile file, String currentUsername) {
         log.info("Attempting to create document for service request ID: {} | citizen: {} | file: {}",
-                request.getServiceRequestId(), currentUsername,
-                file != null ? file.getOriginalFilename() : "null");
+                request.getServiceRequestId(), currentUsername, file != null ? file.getOriginalFilename() : "null");
 
-        // 1. Validate service request exists
         ServiceRequest serviceRequest = serviceRequestRepository.findById(request.getServiceRequestId())
                 .orElseThrow(() -> {
-                    log.warn("Service Request not found with ID: {}", request.getServiceRequestId());
+                    log.warn("Service request not found with ID: {}", request.getServiceRequestId());
                     return new BusinessException("Service Request not found with ID: " + request.getServiceRequestId());
                 });
 
-        // 2. Ensure citizen owns the service request
         if (!serviceRequest.getCitizenReference().getNic().equals(currentUsername)) {
             log.warn("Access denied: citizen '{}' attempted to upload document for service request ID: {} owned by '{}'",
-                    currentUsername, request.getServiceRequestId(),
-                    serviceRequest.getCitizenReference().getNic());
+                    currentUsername, request.getServiceRequestId(), serviceRequest.getCitizenReference().getNic());
             throw new AccessDeniedException("You can only add documents to your own service requests.");
         }
 
-        // 3. Persist the file to local storage – returns the unique stored filename
         String storedFilename = fileStorageService.storeFile(file);
         log.info("File stored on disk as: {}", storedFilename);
 
-        // 4. Persist metadata to DB
         SupportingDocument document = SupportingDocument.builder()
                 .requestReference(serviceRequest)
                 .type(request.getType())
                 .name(request.getName().trim())
-                .documentReference(storedFilename)          // path stored in DB
+                .documentReference(storedFilename)
                 .verificationStatus(VerificationStatus.PENDING)
                 .build();
 
         document = supportingDocumentRepository.save(document);
         log.info("Document record saved with ID: {} | stored file: {}", document.getId(), storedFilename);
-
         return mapToResponse(document);
     }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // Read
-    // ─────────────────────────────────────────────────────────────────────────
 
     @Override
     @Transactional(readOnly = true)
@@ -114,16 +79,11 @@ public class DocumentExecutionServiceImpl implements DocumentExecutionService {
             throw new BusinessException("Service Request not found with ID: " + serviceRequestId);
         }
 
-        return supportingDocumentRepository
-                .findByRequestReferenceIdOrderByIdAsc(serviceRequestId)
+        return supportingDocumentRepository.findByRequestReferenceIdOrderByIdAsc(serviceRequestId)
                 .stream()
                 .map(this::mapToResponse)
                 .toList();
     }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // Update
-    // ─────────────────────────────────────────────────────────────────────────
 
     @Override
     @Transactional
@@ -144,7 +104,7 @@ public class DocumentExecutionServiceImpl implements DocumentExecutionService {
     @Override
     @Transactional
     public DocumentResponse updateDocumentVerificationStatus(Long id, VerificationStatus verificationStatus) {
-        log.info("Updating verification status for document ID: {} → {}", id, verificationStatus);
+        log.info("Updating verification status for document ID: {} to {}", id, verificationStatus);
         SupportingDocument document = getDocumentEntityById(id);
 
         document.setVerificationStatus(verificationStatus);
@@ -154,31 +114,21 @@ public class DocumentExecutionServiceImpl implements DocumentExecutionService {
         return mapToResponse(document);
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Delete
-    // ─────────────────────────────────────────────────────────────────────────
-
     @Override
     @Transactional
     public void deleteDocument(Long id) {
         log.info("Deleting document with ID: {}", id);
         SupportingDocument document = getDocumentEntityById(id);
 
-        // Remove physical file from disk first (before DB record disappears)
         fileStorageService.deleteFile(document.getDocumentReference());
-
         supportingDocumentRepository.delete(document);
         log.info("Document record deleted from DB for ID: {}", id);
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Private helpers
-    // ─────────────────────────────────────────────────────────────────────────
-
     private SupportingDocument getDocumentEntityById(Long id) {
         return supportingDocumentRepository.findById(id)
                 .orElseThrow(() -> {
-                    log.warn("Supporting Document not found with ID: {}", id);
+                    log.warn("Supporting document not found with ID: {}", id);
                     return new BusinessException("Supporting Document not found with ID: " + id);
                 });
     }

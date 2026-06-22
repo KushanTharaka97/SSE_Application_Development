@@ -8,8 +8,8 @@ import com.govtech.gsrp_backend.domain.enums.NotificationStatus;
 import com.govtech.gsrp_backend.domain.service.NotificationListService;
 import com.govtech.gsrp_backend.external.repository.CitizenRepository;
 import com.govtech.gsrp_backend.external.repository.NotificationRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,13 +17,11 @@ import java.util.List;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class NotificationListServiceImpl implements NotificationListService {
 
-    @Autowired
-    private NotificationRepository notificationRepository;
-
-    @Autowired
-    private CitizenRepository citizenRepository;
+    private final NotificationRepository notificationRepository;
+    private final CitizenRepository citizenRepository;
 
     @Override
     @Transactional(readOnly = true)

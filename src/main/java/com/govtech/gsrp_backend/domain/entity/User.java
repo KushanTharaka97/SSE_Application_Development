@@ -1,6 +1,6 @@
 package com.govtech.gsrp_backend.domain.entity;
 
-import com.govtech.gsrp_backend.domain.util.Role;
+import com.govtech.gsrp_backend.domain.enums.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

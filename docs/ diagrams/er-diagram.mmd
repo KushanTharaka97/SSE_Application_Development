@@ -1,0 +1,66 @@
+ ### ER Diagram
+  ```mermaid
+  erDiagram
+      USER {
+          BIGINT id PK
+          VARCHAR username
+          VARCHAR password
+          VARCHAR email
+      }
+
+      CITIZEN {
+          BIGINT id PK
+          VARCHAR name
+          VARCHAR nic
+          VARCHAR email
+          VARCHAR mobile
+          VARCHAR address
+          VARCHAR status
+      }
+
+      SERVICE_REQUEST {
+          BIGINT id PK
+          BIGINT citizen_id FK
+          VARCHAR service_type
+          VARCHAR description
+          VARCHAR status
+          TIMESTAMP created_date
+          TIMESTAMP updated_date
+      }
+
+      SUPPORTING_DOCUMENT {
+          BIGINT id PK
+          BIGINT service_request_id FK
+          VARCHAR type
+          VARCHAR name
+          VARCHAR document_reference
+          VARCHAR verification_status
+      }
+
+      NOTIFICATION {
+          BIGINT id PK
+          BIGINT citizen_id FK
+          BIGINT service_request_id FK
+          VARCHAR message
+          VARCHAR status
+          TIMESTAMP created_date
+      }
+
+      SERVICE_REQUEST_STATUS_HISTORY {
+          BIGINT id PK
+          BIGINT service_request_id FK
+          VARCHAR previous_status
+          VARCHAR new_status
+          VARCHAR changed_by
+          TIMESTAMP changed_at
+      }
+
+      USER ||--o{ USER_ROLES : has
+      CITIZEN ||--o{ SERVICE_REQUEST : submits
+      SERVICE_REQUEST ||--o{ SUPPORTING_DOCUMENT : contains
+      CITIZEN ||--o{ NOTIFICATION : receives
+      SERVICE_REQUEST ||--o{ NOTIFICATION : triggers
+      SERVICE_REQUEST ||--o{ SERVICE_REQUEST_STATUS_HISTORY : tracks
+
+
+  ```md

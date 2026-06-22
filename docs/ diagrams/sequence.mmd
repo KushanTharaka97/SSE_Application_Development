@@ -1,0 +1,34 @@
+ ### Request Processing Sequence
+  ```mermaid
+  sequenceDiagram
+      actor Citizen
+      actor ServiceAgent as Service Agent
+      participant API as Spring Boot API
+      participant DB as MySQL
+      participant FS as File Storage
+      participant Notify as Notification Service
+
+      Citizen->>API: POST /api/service-requests
+      API->>DB: Save service request
+      DB-->>API: Request saved
+      API-->>Citizen: 201 Created
+
+      Citizen->>API: POST /api/documents (multipart)
+      API->>FS: Store uploaded file
+      API->>DB: Save document metadata
+      API-->>Citizen: 201 Created
+
+      ServiceAgent->>API: PATCH /api/service-requests/{id}/status
+      API->>DB: Update request status
+      API->>DB: Save status history
+      API->>Notify: Create notification
+      Notify->>DB: Save notification
+      API-->>ServiceAgent: 200 OK
+
+
+  ---
+
+  **How to attach screenshots properly**
+  Use standard Markdown:
+
+  ```md

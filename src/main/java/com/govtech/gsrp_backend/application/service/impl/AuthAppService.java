@@ -8,10 +8,10 @@ import com.govtech.gsrp_backend.application.exception.BusinessException;
 import com.govtech.gsrp_backend.application.security.JwtUtils;
 import com.govtech.gsrp_backend.application.service.IAuthAppService;
 import com.govtech.gsrp_backend.domain.entity.User;
-import com.govtech.gsrp_backend.domain.util.Role;
+import com.govtech.gsrp_backend.domain.enums.Role;
 import com.govtech.gsrp_backend.external.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -28,19 +28,13 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class AuthAppService implements IAuthAppService {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder encoder;
-
-    @Autowired
-    private JwtUtils jwtUtils;
+    private final AuthenticationManager authenticationManager;
+    private final UserRepository userRepository;
+    private final PasswordEncoder encoder;
+    private final JwtUtils jwtUtils;
 
     @Override
     public JwtResponse authenticateUser(LoginRequest loginRequest) {
