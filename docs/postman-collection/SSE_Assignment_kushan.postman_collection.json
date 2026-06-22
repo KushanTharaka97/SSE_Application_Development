@@ -1,0 +1,2219 @@
+{
+  "info": {
+    "_postman_id": "bdfbc979-ee64-416f-9c26-d240ba466d0c",
+    "name": "SSE_Assignment_kushan",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "45199627"
+  },
+  "item": [
+    {
+      "name": "User-Creation-Auth-Related",
+      "item": [
+        {
+          "name": "Register a new user [ADMIN] ( POST /api/auth/register )",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n        \"username\": \"testuser-as-admin\",\r\n        \"email\": \"testuserasadmin@example.com\",\r\n        \"password\": \"password123\",\r\n        \"roles\": [\"ADMIN\"]\r\n      }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/auth/register",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Generated from cURL:   curl -X POST http://localhost:8080/api/auth/register \\\r\n      -H \"Content-Type: application/json\" \\\r\n      -d '{\r\n        \"username\": \"testuser\",\r\n        \"email\": \"testuser@example.com\",\r\n        \"password\": \"password123\",\r\n        \"roles\": [\"USER\"]\r\n      }'\r\n"
+          },
+          "response": []
+        },
+        {
+          "name": "Register a new user [ServiceAgent] ( POST /api/auth/register )",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n        \"username\": \"testuser-as-service-agent\",\r\n        \"email\": \"testuserserviceagent@example.com\",\r\n        \"password\": \"password123\",\r\n       \"roles\": [\"SERVICE_AGENT\"]\r\n      }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/auth/register",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Generated from cURL: curl -X POST http://localhost:8080/api/auth/register \\\r\n      -H \"Content-Type: application/json\" \\\r\n      -d '{\r\n        \"username\": \"testuser\",\r\n        \"email\": \"testuser@example.com\",\r\n        \"password\": \"password123\",\r\n        \"roles\": [\"USER\"]\r\n      }'"
+          },
+          "response": []
+        },
+        {
+          "name": "Register a new user [CITIZEN] ( POST /api/auth/register )",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"username\": \"testuser-as-citizen\",\r\n    \"email\": \"testuserascitizen@example.com\",\r\n    \"password\": \"password123\",\r\n    \"roles\": [\r\n        \"CITIZEN\"\r\n    ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/auth/register",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Generated from cURL:  curl -X POST http://localhost:8080/api/auth/register \\\r\n      -H \"Content-Type: application/json\" \\\r\n      -d '{\r\n        \"username\": \"testuser\",\r\n        \"email\": \"testuser@example.com\",\r\n        \"password\": \"password123\",\r\n        \"roles\": [\"USER\"]\r\n      }'"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Current User-[ADMIN]-( GET /api/auth/me )",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer <YOUR_JWT_TOKEN_HERE>"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/auth/me",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "auth",
+                "me"
+              ]
+            },
+            "description": "Generated from cURL:  curl -X GET http://localhost:8080/api/auth/me \\\r\n      -H \"Authorization: Bearer <YOUR_JWT_TOKEN_HERE>\""
+          },
+          "response": []
+        },
+        {
+          "name": "Get Current User-[SERVICE-AGENT]-( GET /api/auth/me )",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer <YOUR_JWT_TOKEN_HERE>"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/auth/me",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "auth",
+                "me"
+              ]
+            },
+            "description": "Generated from cURL: \r\n    curl -X GET http://localhost:8080/api/auth/me \\\r\n      -H \"Authorization: Bearer <YOUR_JWT_TOKEN_HERE>\""
+          },
+          "response": []
+        },
+        {
+          "name": "Login -[ADMIN]- ( POST /api/auth/login )",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n        \"username\": \"testuser\",\r\n        \"password\": \"password123\"\r\n      }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/auth/login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Generated from cURL: curl -X POST http://localhost:8080/api/auth/login \\\r\n      -H \"Content-Type: application/json\" \\\r\n      -d '{\r\n        \"username\": \"testuser\",\r\n        \"password\": \"password123\"\r\n      }'"
+          },
+          "response": []
+        },
+        {
+          "name": "Login -[SERVICE-AGENT]- ( POST /api/auth/login )",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n        \"username\": \"testuser\",\r\n        \"password\": \"password123\"\r\n      }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/auth/login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Generated from cURL:   curl -X POST http://localhost:8080/api/auth/login \\\r\n      -H \"Content-Type: application/json\" \\\r\n      -d '{\r\n        \"username\": \"testuser\",\r\n        \"password\": \"password123\"\r\n      }'"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Current User [CITIZEN]( GET /api/auth/me )",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJ0ZXN0dXNlciIsImlhdCI6MTc4MTg4MzY0MCwiZXhwIjoxNzgxOTcwMDQwfQ.M0ifDvFOUAuA4pQoux6IftN335PjjW4L06xZPWBM4_A21N4ff5RbCgjIWx8ctHbt",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer <YOUR_JWT_TOKEN_HERE>"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/auth/me",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "auth",
+                "me"
+              ]
+            },
+            "description": "Generated from cURL: \r\n    curl -X GET http://localhost:8080/api/auth/me \\\r\n      -H \"Authorization: Bearer <YOUR_JWT_TOKEN_HERE>\""
+          },
+          "response": []
+        },
+        {
+          "name": "Login -CITIZEN - ( POST /api/auth/login )",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"username\": \"testuser\",\r\n    \"password\": \"password123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/auth/login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Generated from cURL:  curl -X POST http://localhost:8080/api/auth/login \\\r\n      -H \"Content-Type: application/json\" \\\r\n      -d '{\r\n        \"username\": \"testuser\",\r\n        \"password\": \"password123\"\r\n      }'"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Citizen-Related-Controller",
+      "item": [
+        {
+          "name": "Admin Cancels (Soft Deletes) Service Request (requires ADMIN role JWT)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer <JWT_TOKEN_HERE>"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/service-requests/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "service-requests",
+                "1"
+              ]
+            },
+            "description": "Generated from cURL: curl -X DELETE http://localhost:8080/api/service-requests/1 \\\r\n  -H \"Authorization: Bearer <JWT_TOKEN_HERE>\"\r\n"
+          },
+          "response": []
+        },
+        {
+          "name": "Citizen Submits Service Request (requires CITIZEN role JWT)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer <JWT_TOKEN_HERE>"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"serviceType\": \"DOCUMENT_RENEWAL\",\r\n    \"description\": \"Requesting renewal of my National Identity Card.\"\r\n  }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/service-requests",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "service-requests"
+              ]
+            },
+            "description": "Generated from cURL: curl -X POST http://localhost:8080/api/service-requests \\\r\n  -H \"Authorization: Bearer <JWT_TOKEN_HERE>\" \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\r\n    \"serviceType\": \"DOCUMENT_RENEWAL\",\r\n    \"description\": \"Requesting renewal of my National Identity Card.\"\r\n  }'\r\n"
+          },
+          "response": []
+        },
+        {
+          "name": "Admin Submits on Behalf of Citizen (requires ADMIN role JWT and citizenId)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer <JWT_TOKEN_HERE>"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"serviceType\": \"GENERAL_INQUIRY\",\r\n    \"description\": \"General inquiry on service procedures.\",\r\n    \"citizenId\": 1\r\n  }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/service-requests",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "service-requests"
+              ]
+            },
+            "description": "Generated from cURL: curl -X POST http://localhost:8080/api/service-requests \\\r\n  -H \"Authorization: Bearer <JWT_TOKEN_HERE>\" \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\r\n    \"serviceType\": \"GENERAL_INQUIRY\",\r\n    \"description\": \"General inquiry on service procedures.\",\r\n    \"citizenId\": 1\r\n  }'\r\n"
+          },
+          "response": []
+        },
+        {
+          "name": "Citizen Views Their Own Service Requests (requires CITIZEN role JWT)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer <JWT_TOKEN_HERE>"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/service-requests/my?page=0&size=10",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "service-requests",
+                "my"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Generated from cURL: curl -X GET \"http://localhost:8080/api/service-requests/my?page=0&size=10\" \\\r\n  -H \"Authorization: Bearer <JWT_TOKEN_HERE>\"\r\n"
+          },
+          "response": []
+        },
+        {
+          "name": "View Specific Service Request Details (requires CITIZEN, SERVICE_AGENT, or ADMIN JWT)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer <JWT_TOKEN_HERE>"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/service-requests/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "service-requests",
+                "1"
+              ]
+            },
+            "description": "Generated from cURL: curl -X GET http://localhost:8080/api/service-requests/1 \\\r\n  -H \"Authorization: Bearer <JWT_TOKEN_HERE>\""
+          },
+          "response": []
+        },
+        {
+          "name": "Service Agent or Admin Lists/Filters Service Requests (requires SERVICE_AGENT or ADMIN JWT)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer <JWT_TOKEN_HERE>"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/service-requests?citizenId=1&status=SUBMITTED&serviceType=DOCUMENT_RENEWAL&page=0&size=10",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "service-requests"
+              ],
+              "query": [
+                {
+                  "key": "citizenId",
+                  "value": "1"
+                },
+                {
+                  "key": "status",
+                  "value": "SUBMITTED"
+                },
+                {
+                  "key": "serviceType",
+                  "value": "DOCUMENT_RENEWAL"
+                },
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Generated from cURL: curl -X GET \"http://localhost:8080/api/service-requests?citizenId=1&status=SUBMITTED&serviceType=DOCUMENT_RENEWAL&page=0&size=10\" \\\r\n  -H \"Authorization: Bearer <JWT_TOKEN_HERE>\""
+          },
+          "response": []
+        },
+        {
+          "name": "Service Agent or Admin Updates Service Request Details (requires SERVICE_AGENT or ADMIN JWT)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer <JWT_TOKEN_HERE>"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"serviceType\": \"DOCUMENT_RENEWAL\",\r\n    \"description\": \"Requesting renewal of my National Identity Card - updated reason.\"\r\n  }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/service-requests/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "service-requests",
+                "1"
+              ]
+            },
+            "description": "Generated from cURL: curl -X PUT http://localhost:8080/api/service-requests/1 \\\r\n  -H \"Authorization: Bearer <JWT_TOKEN_HERE>\" \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\r\n    \"serviceType\": \"DOCUMENT_RENEWAL\",\r\n    \"description\": \"Requesting renewal of my National Identity Card - updated reason.\"\r\n  }'\r\n"
+          },
+          "response": []
+        },
+        {
+          "name": "Service Agent or Admin Updates Service Request Status (requires SERVICE_AGENT or ADMIN JWT)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer <JWT_TOKEN_HERE>"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"status\": \"APPROVED\"\r\n  }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/service-requests/1/status",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "service-requests",
+                "1",
+                "status"
+              ]
+            },
+            "description": "Generated from cURL: curl -X PATCH http://localhost:8080/api/service-requests/1/status \\\r\n  -H \"Authorization: Bearer <JWT_TOKEN_HERE>\" \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\r\n    \"status\": \"APPROVED\"\r\n  }'\r\n"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Supporting Document Management Endpoints",
+      "item": [
+        {
+          "name": "Citizen Adds Supporting Document Metadata (requires CITIZEN role JWT)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer <CITIZEN_JWT_TOKEN>"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"serviceRequestId\": 1,\r\n    \"type\": \"IDENTIFICATION\",\r\n    \"name\": \"nic-front-scan.pdf\",\r\n    \"documentReference\": \"DOC-REF-001\"\r\n  }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/documents",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "documents"
+              ]
+            },
+            "description": "Generated from cURL: curl -X POST http://localhost:8080/api/documents \\\r\n  -H \"Authorization: Bearer <CITIZEN_JWT_TOKEN>\" \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\r\n    \"serviceRequestId\": 1,\r\n    \"type\": \"IDENTIFICATION\",\r\n    \"name\": \"nic-front-scan.pdf\",\r\n    \"documentReference\": \"DOC-REF-001\"\r\n  }'\r\n"
+          },
+          "response": []
+        },
+        {
+          "name": "Service Agent Views Supporting Document by ID (requires SERVICE_AGENT role JWT)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer <SERVICE_AGENT_JWT_TOKEN>"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/documents/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "documents",
+                "1"
+              ]
+            },
+            "description": "Generated from cURL: curl -X GET http://localhost:8080/api/documents/1 \\\r\n  -H \"Authorization: Bearer <SERVICE_AGENT_JWT_TOKEN>\""
+          },
+          "response": []
+        },
+        {
+          "name": "Service Agent Views All Documents for a Service Request (requires SERVICE_AGENT role JWT)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer <SERVICE_AGENT_JWT_TOKEN>"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/service-requests/1/documents",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "service-requests",
+                "1",
+                "documents"
+              ]
+            },
+            "description": "Generated from cURL: curl -X GET http://localhost:8080/api/service-requests/1/documents \\\r\n  -H \"Authorization: Bearer <SERVICE_AGENT_JWT_TOKEN>\""
+          },
+          "response": []
+        },
+        {
+          "name": "Service Agent Updates Full Document Metadata (requires SERVICE_AGENT role JWT)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer <SERVICE_AGENT_JWT_TOKEN>"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"type\": \"PROOF_OF_ADDRESS\",\r\n    \"name\": \"utility-bill-june-2026.pdf\",\r\n    \"documentReference\": \"DOC-REF-001-UPD\",\r\n    \"verificationStatus\": \"VERIFIED\"\r\n  }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/documents/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "documents",
+                "1"
+              ]
+            },
+            "description": "Generated from cURL: curl -X PUT http://localhost:8080/api/documents/1 \\\r\n  -H \"Authorization: Bearer <SERVICE_AGENT_JWT_TOKEN>\" \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\r\n    \"type\": \"PROOF_OF_ADDRESS\",\r\n    \"name\": \"utility-bill-june-2026.pdf\",\r\n    \"documentReference\": \"DOC-REF-001-UPD\",\r\n    \"verificationStatus\": \"VERIFIED\"\r\n  }'\r\n"
+          },
+          "response": []
+        },
+        {
+          "name": " Service Agent Updates Only Document Verification Status (requires SERVICE_AGENT role JWT)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer <SERVICE_AGENT_JWT_TOKEN>"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"verificationStatus\": \"REJECTED\"\r\n  }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/documents/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "documents",
+                "1"
+              ]
+            },
+            "description": "Generated from cURL: curl -X PATCH http://localhost:8080/api/documents/1 \\\r\n  -H \"Authorization: Bearer <SERVICE_AGENT_JWT_TOKEN>\" \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\r\n    \"verificationStatus\": \"REJECTED\"\r\n  }'\r\n"
+          },
+          "response": []
+        },
+        {
+          "name": "Admin Deletes Supporting Document Metadata (requires ADMIN role JWT)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer <ADMIN_JWT_TOKEN>"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/documents/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "documents",
+                "1"
+              ]
+            },
+            "description": "Generated from cURL: curl -X DELETE http://localhost:8080/api/documents/1 \\\r\n  -H \"Authorization: Bearer <ADMIN_JWT_TOKEN>\""
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Updated Service Request Management Endpoints (Current Controller Coverage)",
+      "item": [
+        {
+          "name": "Citizen Submits Service Request (requires CITIZEN role JWT)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer <CITIZEN_JWT_TOKEN>"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"serviceType\": \"DOCUMENT_RENEWAL\",\r\n    \"description\": \"Requesting renewal of my National Identity Card.\"\r\n  }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/service-requests",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "service-requests"
+              ]
+            },
+            "description": "Generated from cURL: curl -X POST http://localhost:8080/api/service-requests \\\r\n  -H \"Authorization: Bearer <CITIZEN_JWT_TOKEN>\" \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\r\n    \"serviceType\": \"DOCUMENT_RENEWAL\",\r\n    \"description\": \"Requesting renewal of my National Identity Card.\"\r\n  }'\r\n"
+          },
+          "response": []
+        },
+        {
+          "name": "Admin Submits Service Request on Behalf of Citizen (requires ADMIN role JWT)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer <ADMIN_JWT_TOKEN>"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"serviceType\": \"GENERAL_INQUIRY\",\r\n    \"description\": \"General inquiry on government service procedure.\",\r\n    \"citizenId\": 1\r\n  }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/service-requests",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "service-requests"
+              ]
+            },
+            "description": "Generated from cURL: curl -X POST http://localhost:8080/api/service-requests \\\r\n  -H \"Authorization: Bearer <ADMIN_JWT_TOKEN>\" \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\r\n    \"serviceType\": \"GENERAL_INQUIRY\",\r\n    \"description\": \"General inquiry on government service procedure.\",\r\n    \"citizenId\": 1\r\n  }'\r\n"
+          },
+          "response": []
+        },
+        {
+          "name": "Citizen Views Their Own Service Requests (requires CITIZEN role JWT)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer <CITIZEN_JWT_TOKEN>"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/service-requests/my?page=0&size=10",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "service-requests",
+                "my"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Generated from cURL: curl -X GET \"http://localhost:8080/api/service-requests/my?page=0&size=10\" \\\r\n  -H \"Authorization: Bearer <CITIZEN_JWT_TOKEN>\"\r\n"
+          },
+          "response": []
+        },
+        {
+          "name": "Citizen, Service Agent, or Admin Views Specific Service Request (requires matching JWT)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer <JWT_TOKEN_HERE>"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/service-requests/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "service-requests",
+                "1"
+              ]
+            },
+            "description": "Generated from cURL: curl -X GET http://localhost:8080/api/service-requests/1 \\\r\n  -H \"Authorization: Bearer <JWT_TOKEN_HERE>\""
+          },
+          "response": []
+        },
+        {
+          "name": "Service Agent or Admin Lists/Filters Service Requests",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer <SERVICE_AGENT_OR_ADMIN_JWT_TOKEN>"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/service-requests?citizenId=1&status=SUBMITTED&serviceType=DOCUMENT_RENEWAL&page=0&size=10",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "service-requests"
+              ],
+              "query": [
+                {
+                  "key": "citizenId",
+                  "value": "1"
+                },
+                {
+                  "key": "status",
+                  "value": "SUBMITTED"
+                },
+                {
+                  "key": "serviceType",
+                  "value": "DOCUMENT_RENEWAL"
+                },
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Generated from cURL: curl -X GET \"http://localhost:8080/api/service-requests?citizenId=1&status=SUBMITTED&serviceType=DOCUMENT_RENEWAL&page=0&size=10\" \\\r\n  -H \"Authorization: Bearer <SERVICE_AGENT_OR_ADMIN_JWT_TOKEN>\"\r\n"
+          },
+          "response": []
+        },
+        {
+          "name": "Service Agent or Admin Updates Service Request Details",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer <SERVICE_AGENT_OR_ADMIN_JWT_TOKEN>"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"serviceType\": \"DOCUMENT_RENEWAL\",\r\n    \"description\": \"Updated document renewal request details.\"\r\n  }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/service-requests/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "service-requests",
+                "1"
+              ]
+            },
+            "description": "Generated from cURL: curl -X PUT http://localhost:8080/api/service-requests/1 \\\r\n  -H \"Authorization: Bearer <SERVICE_AGENT_OR_ADMIN_JWT_TOKEN>\" \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\r\n    \"serviceType\": \"DOCUMENT_RENEWAL\",\r\n    \"description\": \"Updated document renewal request details.\"\r\n  }'\r\n"
+          },
+          "response": []
+        },
+        {
+          "name": " Service Agent or Admin Updates Service Request Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer <SERVICE_AGENT_OR_ADMIN_JWT_TOKEN>"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"status\": \"IN_REVIEW\"\r\n  }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/service-requests/1/status",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "service-requests",
+                "1",
+                "status"
+              ]
+            },
+            "description": "Generated from cURL: curl -X PATCH http://localhost:8080/api/service-requests/1/status \\\r\n  -H \"Authorization: Bearer <SERVICE_AGENT_OR_ADMIN_JWT_TOKEN>\" \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\r\n    \"status\": \"IN_REVIEW\"\r\n  }'\r\n"
+          },
+          "response": []
+        },
+        {
+          "name": "Admin Cancels Service Request",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer <ADMIN_JWT_TOKEN>"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/service-requests/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "service-requests",
+                "1"
+              ]
+            },
+            "description": "Generated from cURL: curl -X DELETE http://localhost:8080/api/service-requests/1 \\\r\n  -H \"Authorization: Bearer <ADMIN_JWT_TOKEN>\"\r\n"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Step-by-Step Execution Guide for Postman / Curl",
+      "item": [
+        {
+          "name": "Step 1. Login as Admin and copy the JWT token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"username\": \"testuser-as-admin\",\r\n    \"password\": \"password123\"\r\n  }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/auth/login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "```\nStep 1. Login as Admin and copy the JWT tokencurl -X POST http://localhost:8080/api/auth/login \\  -H \"Content-Type: application/json\" \\  -d &#x27;{    \"username\": \"admin\",    \"password\": \"adminpassword\"  }&#x27;# Save response.token as <ADMIN_JWT_TOKEN>\n\n ```"
+          },
+          "response": []
+        },
+        {
+          "name": " Step 2. Register a Service Agent using the Admin token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_JWT_TOKEN}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"username\": \"agent001\",\r\n    \"email\": \"agent01@example.com\",\r\n    \"password\": \"password123\",\r\n    \"roles\": [\"SERVICE_AGENT\"]\r\n  }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/auth/admin/register",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "auth",
+                "admin",
+                "register"
+              ]
+            },
+            "description": "```\nStep 2. Register a Service Agent using the Admin tokencurl -X POST http://localhost:8080/api/auth/admin/register \\  -H \"Authorization: Bearer <ADMIN_JWT_TOKEN>\" \\  -H \"Content-Type: application/json\" \\  -d &#x27;{    \"username\": \"agent007\",    \"email\": \"agent@example.com\",    \"password\": \"agentpassword\",    \"roles\": [\"SERVICE_AGENT\"]  }&#x27;\n\n ```"
+          },
+          "response": []
+        },
+        {
+          "name": "Step 3. Create a Citizen profile using the Admin token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_JWT_TOKEN}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Kushan Tharaka\",\r\n    \"nic\": \"123456789V\",\r\n    \"email\": \"kushan@example.com\",\r\n    \"mobile\": \"0771234567\",\r\n    \"address\": \"123, Galle Road, Colombo\",\r\n    \"status\": \"ACTIVE\"\r\n  }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/citizens",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "citizens"
+              ]
+            },
+            "description": "``` antlr4\nStep 3. Create a Citizen profile using the Admin token\n# This also auto-creates a login account with username = NIC and password = NIC.\ncurl -X POST http://localhost:8080/api/citizens \\\n  -H \"Authorization: Bearer <ADMIN_JWT_TOKEN>\" \\\n  -H \"Content-Type: application/json\" \\\n  -d &#x27;{\n    \"name\": \"Kushan Tharaka\",\n    \"nic\": \"971234567V\",\n    \"email\": \"kushan@example.com\",\n    \"mobile\": \"0771234567\",\n    \"address\": \"123, Galle Road, Colombo\",\n    \"status\": \"ACTIVE\"\n  }&#x27;\n# Save response.id as <CITIZEN_ID>\n\n ```"
+          },
+          "response": []
+        },
+        {
+          "name": "Step 4. Login as the Citizen and copy the JWT token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"username\": \"123456789V\",\r\n    \"password\": \"123456789V\"\r\n  }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/auth/login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "```\nStep 4. Login as the Citizen and copy the JWT token\ncurl -X POST http://localhost:8080/api/auth/login \\\n  -H \"Content-Type: application/json\" \\\n  -d &#x27;{\n    \"username\": \"971234567V\",\n    \"password\": \"971234567V\"\n  }&#x27;\n# Save response.token as <CITIZEN_JWT_TOKEN>\n\n\n ```"
+          },
+          "response": []
+        },
+        {
+          "name": "Step 5. Citizen creates a service request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{CITIZEN_JWT_TOKEN}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"serviceType\": \"DOCUMENT_RENEWAL\",\r\n    \"description\": \"Requesting renewal of my National Identity Card.\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/service-requests",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "service-requests"
+              ]
+            },
+            "description": "```\nStep 5. Citizen creates a service request\ncurl -X POST http://localhost:8080/api/service-requests \\\n  -H \"Authorization: Bearer <CITIZEN_JWT_TOKEN>\" \\\n  -H \"Content-Type: application/json\" \\\n  -d &#x27;{\n    \"serviceType\": \"DOCUMENT_RENEWAL\",\n    \"description\": \"Requesting renewal of my National Identity Card.\"\n  }&#x27;\n# Save response.id as <SERVICE_REQUEST_ID>\n\n\n ```"
+          },
+          "response": []
+        },
+        {
+          "name": "Step 6. Citizen checks their own service requests",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{CITIZEN_JWT_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/service-requests/my?page=0&size=10",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "service-requests",
+                "my"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "```\nStep 6. Citizen checks their own service requests\ncurl -X GET \"http://localhost:8080/api/service-requests/my?page=0&size=10\" \\\n  -H \"Authorization: Bearer <CITIZEN_JWT_TOKEN>\"\n\n ```"
+          },
+          "response": []
+        },
+        {
+          "name": "Step 7. Citizen adds a supporting document to that service request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{CITIZEN_JWT_TOKEN}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"serviceRequestId\": {{SERVICE_REQUEST_ID}},\r\n    \"type\": \"IDENTIFICATION\",\r\n    \"name\": \"nic-front-scan.pdf\",\r\n    \"documentReference\": \"DOC-REF-001\"\r\n  }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/documents",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "documents"
+              ]
+            },
+            "description": "```\nStep 7. Citizen adds a supporting document to that service request\ncurl -X POST http://localhost:8080/api/documents \\\n  -H \"Authorization: Bearer <CITIZEN_JWT_TOKEN>\" \\\n  -H \"Content-Type: application/json\" \\\n  -d &#x27;{\n    \"serviceRequestId\": <SERVICE_REQUEST_ID>,\n    \"type\": \"IDENTIFICATION\",\n    \"name\": \"nic-front-scan.pdf\",\n    \"documentReference\": \"DOC-REF-001\"\n  }&#x27;\n# Save response.id as <DOCUMENT_ID>\n\n\n ```"
+          },
+          "response": []
+        },
+        {
+          "name": "Step 8. Login as the Service Agent and copy the JWT token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"username\": \"agent007\",\r\n    \"password\": \"agentpassword\"\r\n  }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/auth/login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "```\nStep 8. Login as the Service Agent and copy the JWT token\ncurl -X POST http://localhost:8080/api/auth/login \\\n  -H \"Content-Type: application/json\" \\\n  -d &#x27;{\n    \"username\": \"agent007\",\n    \"password\": \"agentpassword\"\n  }&#x27;\n# Save response.token as <SERVICE_AGENT_JWT_TOKEN>\n\n ```"
+          },
+          "response": []
+        },
+        {
+          "name": "Step 9. Service Agent views the service request by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{SERVICE_AGENT_JWT_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/service-requests/{{SERVICE_REQUEST_ID}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "service-requests",
+                "{{SERVICE_REQUEST_ID}}"
+              ]
+            },
+            "description": "```\nStep 9. Service Agent views the service request by ID\ncurl -X GET http://localhost:8080/api/service-requests/<SERVICE_REQUEST_ID> \\\n  -H \"Authorization: Bearer <SERVICE_AGENT_JWT_TOKEN>\"\n\n ```"
+          },
+          "response": []
+        },
+        {
+          "name": "Step 10. Service Agent lists all documents for the service request",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{SERVICE_AGENT_JWT_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/service-requests/{{SERVICE_REQUEST_ID}}/documents",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "service-requests",
+                "{{SERVICE_REQUEST_ID}}",
+                "documents"
+              ]
+            },
+            "description": "```\nStep 10. Service Agent lists all documents for the service request\ncurl -X GET http://localhost:8080/api/service-requests/<SERVICE_REQUEST_ID>/documents \\\n  -H \"Authorization: Bearer <SERVICE_AGENT_JWT_TOKEN>\"\n\n\n ```"
+          },
+          "response": []
+        },
+        {
+          "name": "Step 11. Service Agent views the document by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{SERVICE_AGENT_JWT_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/documents/{{DOCUMENT_ID}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "documents",
+                "{{DOCUMENT_ID}}"
+              ]
+            },
+            "description": "Generated from cURL: curl -X GET http://localhost:8080/api/documents/<DOCUMENT_ID> \\\r\n  -H \"Authorization: Bearer <SERVICE_AGENT_JWT_TOKEN>\""
+          },
+          "response": []
+        },
+        {
+          "name": "Step 12. Service Agent updates service request details",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{SERVICE_AGENT_JWT_TOKEN}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"serviceType\": \"DOCUMENT_RENEWAL\",\r\n    \"description\": \"Updated by service agent for review.\"\r\n  }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/service-requests/{{SERVICE_REQUEST_ID}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "service-requests",
+                "{{SERVICE_REQUEST_ID}}"
+              ]
+            },
+            "description": "Generated from cURL: curl -X PUT http://localhost:8080/api/service-requests/<SERVICE_REQUEST_ID> \\\r\n  -H \"Authorization: Bearer <SERVICE_AGENT_JWT_TOKEN>\" \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\r\n    \"serviceType\": \"DOCUMENT_RENEWAL\",\r\n    \"description\": \"Updated by service agent for review.\"\r\n  }'\r\n"
+          },
+          "response": []
+        },
+        {
+          "name": "Step 13. Service Agent updates service request status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{SERVICE_AGENT_JWT_TOKEN}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"status\": \"IN_REVIEW\"\r\n  }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/service-requests/{{SERVICE_REQUEST_ID}}/status",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "service-requests",
+                "{{SERVICE_REQUEST_ID}}",
+                "status"
+              ]
+            },
+            "description": "Generated from cURL: curl -X PATCH http://localhost:8080/api/service-requests/<SERVICE_REQUEST_ID>/status \\\r\n  -H \"Authorization: Bearer <SERVICE_AGENT_JWT_TOKEN>\" \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\r\n    \"status\": \"IN_REVIEW\"\r\n  }'"
+          },
+          "response": []
+        },
+        {
+          "name": "Step 14. Service Agent updates full document metadata",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{SERVICE_AGENT_JWT_TOKEN}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"type\": \"PROOF_OF_ADDRESS\",\r\n    \"name\": \"utility-bill-june-2026.pdf\",\r\n    \"documentReference\": \"DOC-REF-001-UPD\",\r\n    \"verificationStatus\": \"VERIFIED\"\r\n  }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/documents/{{DOCUMENT_ID}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "documents",
+                "{{DOCUMENT_ID}}"
+              ]
+            },
+            "description": "Generated from cURL: curl -X PUT http://localhost:8080/api/documents/<DOCUMENT_ID> \\\r\n  -H \"Authorization: Bearer <SERVICE_AGENT_JWT_TOKEN>\" \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\r\n    \"type\": \"PROOF_OF_ADDRESS\",\r\n    \"name\": \"utility-bill-june-2026.pdf\",\r\n    \"documentReference\": \"DOC-REF-001-UPD\",\r\n    \"verificationStatus\": \"VERIFIED\"\r\n  }'\r\n"
+          },
+          "response": []
+        },
+        {
+          "name": "Step 15. Service Agent updates only the document verification status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{SERVICE_AGENT_JWT_TOKEN}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"verificationStatus\": \"REJECTED\"\r\n  }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/documents/{{DOCUMENT_ID}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "documents",
+                "{{DOCUMENT_ID}}"
+              ]
+            },
+            "description": "Generated from cURL: curl -X PATCH http://localhost:8080/api/documents/<DOCUMENT_ID> \\\r\n  -H \"Authorization: Bearer <SERVICE_AGENT_JWT_TOKEN>\" \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\r\n    \"verificationStatus\": \"REJECTED\"\r\n  }'\r\n"
+          },
+          "response": []
+        },
+        {
+          "name": "Step 16. Admin lists service requests with filters",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_JWT_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/service-requests?citizenId={{CITIZEN_ID}}&status=IN_REVIEW&serviceType=DOCUMENT_RENEWAL&page=0&size=10",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "service-requests"
+              ],
+              "query": [
+                {
+                  "key": "citizenId",
+                  "value": "{{CITIZEN_ID}}"
+                },
+                {
+                  "key": "status",
+                  "value": "IN_REVIEW"
+                },
+                {
+                  "key": "serviceType",
+                  "value": "DOCUMENT_RENEWAL"
+                },
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Generated from cURL: curl -X GET \"http://localhost:8080/api/service-requests?citizenId=<CITIZEN_ID>&status=IN_REVIEW&serviceType=DOCUMENT_RENEWAL&page=0&size=10\" \\\r\n  -H \"Authorization: Bearer <ADMIN_JWT_TOKEN>\""
+          },
+          "response": []
+        },
+        {
+          "name": "Step 17. Admin deletes the document",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer <ADMIN_JWT_TOKEN>"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/documents/<DOCUMENT_ID>",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "documents",
+                "<DOCUMENT_ID>"
+              ]
+            },
+            "description": "Generated from cURL: curl -X DELETE http://localhost:8080/api/documents/<DOCUMENT_ID> \\\r\n  -H \"Authorization: Bearer <ADMIN_JWT_TOKEN>\""
+          },
+          "response": []
+        },
+        {
+          "name": "Step 18. Admin cancels the service request",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer <ADMIN_JWT_TOKEN>"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/service-requests/<SERVICE_REQUEST_ID>",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "service-requests",
+                "<SERVICE_REQUEST_ID>"
+              ]
+            },
+            "description": "Generated from cURL: curl -X DELETE http://localhost:8080/api/service-requests/<SERVICE_REQUEST_ID> \\\r\n  -H \"Authorization: Bearer <ADMIN_JWT_TOKEN>\""
+          },
+          "response": []
+        },
+        {
+          "name": "Step 23. Service Agent tries to call an Admin-only delete endpoint",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer <SERVICE_AGENT_JWT_TOKEN>"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/documents/<DOCUMENT_ID>",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "documents",
+                "<DOCUMENT_ID>"
+              ]
+            },
+            "description": "Generated from cURL: curl -X DELETE http://localhost:8080/api/documents/<DOCUMENT_ID> \\\r\n  -H \"Authorization: Bearer <SERVICE_AGENT_JWT_TOKEN>\""
+          },
+          "response": []
+        },
+        {
+          "name": "Step 22. Citizen tries to call a Service-Agent-only endpoint",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{CITIZEN_JWT_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/documents/{{DOCUMENT_ID}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "documents",
+                "{{DOCUMENT_ID}}"
+              ]
+            },
+            "description": "Generated from cURL: curl -X GET http://localhost:8080/api/documents/<DOCUMENT_ID> \\\r\n  -H \"Authorization: Bearer <CITIZEN_JWT_TOKEN>\""
+          },
+          "response": []
+        },
+        {
+          "name": "Step 21. Citizen tries to call an Admin-only endpoint",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer <CITIZEN_JWT_TOKEN>"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/citizens?page=0&size=10",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "citizens"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Generated from cURL: curl -X GET \"http://localhost:8080/api/citizens?page=0&size=10\" \\\r\n  -H \"Authorization: Bearer <CITIZEN_JWT_TOKEN>\""
+          },
+          "response": []
+        },
+        {
+          "name": "Step 20. Citizen verifies own protected access still works",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer <CITIZEN_JWT_TOKEN>"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/notifications/my",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "notifications",
+                "my"
+              ]
+            },
+            "description": "Generated from cURL: curl -X GET http://localhost:8080/api/notifications/my \\\r\n  -H \"Authorization: Bearer <CITIZEN_JWT_TOKEN>\""
+          },
+          "response": []
+        },
+        {
+          "name": "Step 19. Verify unauthenticated access is blocked",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/auth/me",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "auth",
+                "me"
+              ]
+            },
+            "description": "Generated from cURL: curl -X GET http://localhost:8080/api/auth/me"
+          },
+          "response": []
+        },
+        {
+          "name": "Step 7. Citizen adds a supporting document to that service request - Updated",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{CITIZEN_JWT_TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "type": "text",
+                  "key": "serviceRequestId",
+                  "value": " {{SERVICE_REQUEST_ID}}"
+                },
+                {
+                  "type": "text",
+                  "key": "type",
+                  "value": "IDENTIFICATION"
+                },
+                {
+                  "type": "text",
+                  "key": "name",
+                  "value": "My National ID"
+                },
+                {
+                  "key": "file",
+                  "type": "file",
+                  "uuid": "0ccb3190-6c63-40b8-bb91-d0dacb2f6e16",
+                  "src": "/C:/Users/Kushan_105754/Documents/myNationalId_dummy.pdf"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/documents",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "documents"
+              ]
+            },
+            "description": "Generated from cURL:  curl -X POST http://localhost:8080/api/documents \\\r\n      -H \"Authorization: Bearer <JWT_TOKEN>\" \\\r\n      -F \"file=@/path/to/MyNationalID.pdf\" \\\r\n      -F \"serviceRequestId=1\" \\\r\n      -F \"type=NATIONAL_ID\" \\\r\n      -F \"name=My National ID\"\r\n"
+          },
+          "response": []
+        },
+        {
+          "name": " Step 24. Verify invalid JWT token is rejected",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer invalid.jwt.token"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/notifications/my",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "notifications",
+                "my"
+              ]
+            },
+            "description": "Generated from cURL: curl -X GET http://localhost:8080/api/notifications/my \\\r\n  -H \"Authorization: Bearer invalid.jwt.token\""
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Step 25. Verify citizen cannot access another citizen's request",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer <CITIZEN_JWT_TOKEN>"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/service-requests/9999",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "service-requests",
+            "9999"
+          ]
+        },
+        "description": "Generated from cURL: curl -X GET http://localhost:8080/api/service-requests/9999 \\\r\n  -H \"Authorization: Bearer <CITIZEN_JWT_TOKEN>\""
+      },
+      "response": []
+    },
+    {
+      "name": "Step 26. Verify citizen cannot attach a document to another citizen's request",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer <CITIZEN_JWT_TOKEN>"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"serviceRequestId\": 9999,\r\n    \"type\": \"IDENTIFICATION\",\r\n    \"name\": \"forbidden-upload.pdf\",\r\n    \"documentReference\": \"FORBIDDEN-REF-001\"\r\n  }",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/documents",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "documents"
+          ]
+        },
+        "description": "Generated from cURL: curl -X POST http://localhost:8080/api/documents \\\r\n  -H \"Authorization: Bearer <CITIZEN_JWT_TOKEN>\" \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\r\n    \"serviceRequestId\": 9999,\r\n    \"type\": \"IDENTIFICATION\",\r\n    \"name\": \"forbidden-upload.pdf\",\r\n    \"documentReference\": \"FORBIDDEN-REF-001\"\r\n  }'"
+      },
+      "response": []
+    },
+    {
+      "name": "Step 27. Verify Admin still has privileged access",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer <ADMIN_JWT_TOKEN>"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/citizens?page=0&size=10",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "citizens"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "0"
+            },
+            {
+              "key": "size",
+              "value": "10"
+            }
+          ]
+        },
+        "description": "Generated from cURL: curl -X GET \"http://localhost:8080/api/citizens?page=0&size=10\" \\\r\n  -H \"Authorization: Bearer <ADMIN_JWT_TOKEN>\""
+      },
+      "response": []
+    },
+    {
+      "name": "Step 28. Verify Swagger UI is available",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/swagger-ui.html",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "swagger-ui.html"
+          ]
+        },
+        "description": "Generated from cURL: curl -X GET http://localhost:8080/swagger-ui.html"
+      },
+      "response": []
+    },
+    {
+      "name": "Step 29. Verify OpenAPI JSON is available",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/v3/api-docs",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "v3",
+            "api-docs"
+          ]
+        },
+        "description": "Generated from cURL: curl -X GET http://localhost:8080/v3/api-docs"
+      },
+      "response": []
+    },
+    {
+      "name": "Step 30. Verify health endpoint is available",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/actuator/health",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "actuator",
+            "health"
+          ]
+        },
+        "description": "Generated from cURL: curl -X GET http://localhost:8080/actuator/health"
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "ADMIN_JWT_TOKEN",
+      "value": ""
+    },
+    {
+      "key": "CITIZEN_ID",
+      "value": ""
+    },
+    {
+      "key": "CITIZEN_JWT_TOKEN",
+      "value": ""
+    },
+    {
+      "key": "SERVICE_REQUEST_ID",
+      "value": ""
+    },
+    {
+      "key": "DOCUMENT_ID",
+      "value": ""
+    },
+    {
+      "key": "SERVICE_AGENT_JWT_TOKEN",
+      "value": ""
+    }
+  ]
+}
