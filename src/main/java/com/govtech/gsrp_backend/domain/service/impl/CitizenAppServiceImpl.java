@@ -7,11 +7,11 @@ import com.govtech.gsrp_backend.domain.entity.Citizen;
 import com.govtech.gsrp_backend.domain.entity.User;
 import com.govtech.gsrp_backend.domain.enums.CitizenStatus;
 import com.govtech.gsrp_backend.domain.service.ICitizenAppService;
-import com.govtech.gsrp_backend.domain.util.Role;
+import com.govtech.gsrp_backend.domain.enums.Role;
 import com.govtech.gsrp_backend.external.repository.CitizenRepository;
 import com.govtech.gsrp_backend.external.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,16 +25,12 @@ import java.util.Optional;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class CitizenAppServiceImpl implements ICitizenAppService {
 
-    @Autowired
-    private CitizenRepository citizenRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final CitizenRepository citizenRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional

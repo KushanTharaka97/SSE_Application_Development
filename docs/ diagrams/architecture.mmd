@@ -1,0 +1,29 @@
+ ### Architecture Diagram
+  ```mermaid
+  flowchart LR
+      Citizen[Citizen]
+      Agent[Service Agent]
+      Admin[Admin]
+
+      subgraph Backend[Spring Boot Backend]
+          Auth[JWT Auth + Spring Security]
+          API[REST Controllers]
+          Service[Application / Domain Services]
+      end
+
+      DB[(MySQL Database)]
+      FS[(Local File Storage)]
+      JWT[(JWT Token)]
+
+      Citizen --> API
+      Agent --> API
+      Admin --> API
+
+      API --> Auth
+      Auth --> JWT
+      API --> Service
+      Service --> DB
+      Service --> FS
+
+
+  ```md

@@ -13,14 +13,14 @@ import com.govtech.gsrp_backend.domain.enums.NotificationStatus;
 import com.govtech.gsrp_backend.domain.enums.RequestStatus;
 import com.govtech.gsrp_backend.domain.enums.ServiceType;
 import com.govtech.gsrp_backend.domain.service.ServiceRequestExecutionProcessService;
-import com.govtech.gsrp_backend.domain.util.Role;
+import com.govtech.gsrp_backend.domain.enums.Role;
 import com.govtech.gsrp_backend.external.repository.CitizenRepository;
 import com.govtech.gsrp_backend.external.repository.NotificationRepository;
 import com.govtech.gsrp_backend.external.repository.ServiceRequestRepository;
 import com.govtech.gsrp_backend.external.repository.ServiceRequestStatusHistoryRepository;
 import com.govtech.gsrp_backend.external.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,22 +32,14 @@ import java.util.List;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class ServiceRequestExecutionProcessServiceImpl implements ServiceRequestExecutionProcessService {
 
-    @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
-
-    @Autowired
-    private CitizenRepository citizenRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private NotificationRepository notificationRepository;
-
-    @Autowired
-    private ServiceRequestStatusHistoryRepository serviceRequestStatusHistoryRepository;
+    private final ServiceRequestRepository serviceRequestRepository;
+    private final CitizenRepository citizenRepository;
+    private final UserRepository userRepository;
+    private final NotificationRepository notificationRepository;
+    private final ServiceRequestStatusHistoryRepository serviceRequestStatusHistoryRepository;
 
     @Override
     @Transactional

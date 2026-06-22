@@ -80,7 +80,6 @@ src/main/java/com/govtech/gsrp_backend
 ### Documents
 - `POST /api/documents` (`multipart/form-data`)
 - `GET /api/documents/{id}`
-- `GET /api/documents/by-service-request/{serviceRequestId}`
 - `PUT /api/documents/{id}`
 - `PATCH /api/documents/{id}`
 - `DELETE /api/documents/{id}`
@@ -103,16 +102,25 @@ src/main/java/com/govtech/gsrp_backend
 
 ### Environment variables
 
-| Variable | Default | Purpose |
+| Variable | Value | Purpose |
 |---|---|---|
-| `DB_URL` | `jdbc:mysql://localhost:3306/gsrp_db?...` | Database JDBC URL |
-| `DB_USERNAME` | `root` | Database username |
-| `DB_PASSWORD` | `1234` | Database password |
-| `JWT_SECRET` | development default | JWT signing secret |
-| `JWT_EXPIRATION_MS` | `86400000` | JWT expiration in ms |
-| `FILE_UPLOAD_DIR` | `./uploads/documents` | Local document storage directory |
-| `MAX_FILE_SIZE` | `10MB` | Max file upload size |
-| `MAX_REQUEST_SIZE` | `15MB` | Max multipart request size |
+| `DB_URL` | required | Database JDBC URL |
+| `DB_USERNAME` | required | Database username |
+| `DB_PASSWORD` | required | Database password |
+| `JWT_SECRET` | required, minimum 32 chars | JWT signing secret |
+| `JWT_EXPIRATION_MS` | optional, default `86400000` | JWT expiration in ms |
+| `FILE_UPLOAD_DIR` | optional, default `./uploads/documents` | Local document storage directory |
+| `MAX_FILE_SIZE` | optional, default `10MB` | Max file upload size |
+| `MAX_REQUEST_SIZE` | optional, default `15MB` | Max multipart request size |
+
+Set the required variables before running locally. Example for PowerShell:
+
+```powershell
+$env:DB_URL="jdbc:mysql://localhost:3306/gsrp_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC"
+$env:DB_USERNAME="root"
+$env:DB_PASSWORD="your-password"
+$env:JWT_SECRET="changeThisJwtSecretKeyBeforeProductionDeployment123"
+```
 
 ### Run locally
 
@@ -148,6 +156,181 @@ Services:
 
 - Swagger UI: `http://localhost:8080/swagger-ui.html`
 - OpenAPI JSON: `http://localhost:8080/v3/api-docs`
+
+## Visual Architecture
+
+### Architecture Diagram
+
+```mermaid
+flowchart LR
+    Citizen[Citizen]
+    Agent[Service Agent]
+    Admin[Admin]
+
+    subgraph Backend[Spring Boot Backend]
+        Security[JWT Auth and Spring Security]
+        Controllers[REST Controllers]
+        Services[Application and Domain Services]
+    end
+
+    DB[(MySQL Database)]
+    Storage[(Local File Storage)]
+    Token[(JWT Token)]
+
+    Citizen --> Controllers
+    Agent --> Controllers
+    Admin --> Controllers
+
+    Controllers --> Security
+    Security --> Token
+    Controllers --> Services
+    Services --> DB
+    Services --> Storage
+```
+
+Source: `docs/diagrams/architecture.mmd`
+
+### ER Diagram
+
+```mermaid
+erDiagram
+    USER {
+        BIGINT id PK
+        VARCHAR username
+        VARCHAR password
+        VARCHAR email
+    }
+
+    USER_ROLE {
+        BIGINT user_id FK
+        VARCHAR role
+    }
+
+    CITIZEN {
+        BIGINT id PK
+        VARCHAR name
+        VARCHAR nic
+        VARCHAR email
+        VARCHAR mobile
+        VARCHAR address
+        VARCHAR status
+    }
+
+    SERVICE_REQUEST {
+        BIGINT id PK
+        BIGINT citizen_id FK
+        VARCHAR service_type
+        VARCHAR description
+        VARCHAR status
+        TIMESTAMP created_date
+        TIMESTAMP updated_date
+    }
+
+    SUPPORTING_DOCUMENT {
+        BIGINT id PK
+        BIGINT service_request_id FK
+        VARCHAR type
+        VARCHAR name
+        VARCHAR document_reference
+        VARCHAR verification_status
+    }
+
+    NOTIFICATION {
+        BIGINT id PK
+        BIGINT citizen_id FK
+        BIGINT service_request_id FK
+        VARCHAR message
+        VARCHAR status
+        TIMESTAMP created_date
+    }
+
+    SERVICE_REQUEST_STATUS_HISTORY {
+        BIGINT id PK
+        BIGINT service_request_id FK
+        VARCHAR previous_status
+        VARCHAR new_status
+        VARCHAR changed_by
+        TIMESTAMP changed_at
+    }
+
+    USER ||--o{ USER_ROLE : has
+    CITIZEN ||--o{ SERVICE_REQUEST : submits
+    SERVICE_REQUEST ||--o{ SUPPORTING_DOCUMENT : contains
+    CITIZEN ||--o{ NOTIFICATION : receives
+    SERVICE_REQUEST ||--o{ NOTIFICATION : triggers
+    SERVICE_REQUEST ||--o{ SERVICE_REQUEST_STATUS_HISTORY : tracks
+```
+
+Source: `docs/diagrams/er-diagram.mmd`
+
+### Request Processing Sequence
+
+```mermaid
+sequenceDiagram
+    actor Citizen
+    actor ServiceAgent as Service Agent
+    participant API as Spring Boot API
+    participant DB as MySQL
+    participant FS as File Storage
+    participant Notify as Notification Service
+
+    Citizen->>API: POST /api/service-requests
+    API->>DB: Save service request
+    DB-->>API: Request saved
+    API-->>Citizen: 201 Created
+
+    Citizen->>API: POST /api/documents (multipart)
+    API->>FS: Store uploaded file
+    API->>DB: Save document metadata
+    API-->>Citizen: 201 Created
+
+    ServiceAgent->>API: PATCH /api/service-requests/{id}/status
+    API->>DB: Update request status
+    API->>DB: Save status history
+    API->>Notify: Create notification
+    Notify->>DB: Save notification
+    API-->>ServiceAgent: 200 OK
+```
+
+Source: `docs/diagrams/sequence.mmd`
+
+## Evaluation Screenshots
+
+### Postman Login Request
+
+![Postman login request](docs/images/postman/postman-first-login-request.png)
+
+Add the remaining screenshots at these paths to keep the README consistent:
+- `docs/images/postman/postman-collection-overview.png`
+- `docs/images/swagger/swagger-ui.png`
+- `docs/images/docker/docker-compose-healthy.png`
+
+## Response Contract
+
+Successful API responses use a standard envelope:
+
+```json
+{
+  "timestamp": "2026-06-21T10:00:00Z",
+  "status": 200,
+  "message": "Service request retrieved successfully.",
+  "data": {}
+}
+```
+
+Error responses use a standard envelope:
+
+```json
+{
+  "timestamp": "2026-06-21T10:00:00Z",
+  "status": 403,
+  "error": "Forbidden",
+  "message": "Access is denied",
+  "path": "/api/service-requests/1"
+}
+```
+
+The curl guides in `AI-Aid/postman-curl.txt` and `AI-Aid/postman-stepby-step-curl.txt` assume IDs and tokens are read from `response.data`.
 
 ## Health Check
 
@@ -189,10 +372,7 @@ Run tests:
 
 ## Known Gaps / Improvement Backlog
 
-- Consolidate duplicate role enums into one source of truth
-- Replace field injection with constructor injection
 - Add broader integration tests for authorization and persistence
-- Align `AI-Aid/database.txt` fully with the current JPA model
 - Consider pagination for notifications and history
 - Replace local file storage with object storage for production-grade deployment
 

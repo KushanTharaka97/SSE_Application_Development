@@ -1,6 +1,6 @@
 package com.govtech.gsrp_backend.application.dto;
 
-import com.govtech.gsrp_backend.domain.util.Role;
+import com.govtech.gsrp_backend.domain.enums.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
