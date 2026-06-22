@@ -2,6 +2,7 @@ package com.govtech.gsrp_backend.application.controller;
 
 import com.govtech.gsrp_backend.application.dto.DocumentResponse;
 import com.govtech.gsrp_backend.application.dto.ServiceRequestResponse;
+import com.govtech.gsrp_backend.application.dto.ServiceRequestStatusHistoryResponse;
 import com.govtech.gsrp_backend.application.dto.ServiceRequestSubmitDTO;
 import com.govtech.gsrp_backend.application.dto.StatusUpdateRequest;
 import com.govtech.gsrp_backend.domain.enums.RequestStatus;
@@ -69,6 +70,14 @@ public class ServiceRequestController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/{id}/history")
+    @PreAuthorize("hasRole('SERVICE_AGENT')")
+    public ResponseEntity<List<ServiceRequestStatusHistoryResponse>> getRequestStatusHistory(@PathVariable Long id) {
+        log.info("REST request to get status history for Service Request ID: {}", id);
+        List<ServiceRequestStatusHistoryResponse> response = serviceRequestService.getStatusHistory(id);
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping
     @PreAuthorize("hasAnyRole('SERVICE_AGENT', 'ADMIN')")
     public ResponseEntity<Page<ServiceRequestResponse>> getAllRequests(
@@ -97,17 +106,18 @@ public class ServiceRequestController {
     @PreAuthorize("hasAnyRole('SERVICE_AGENT', 'ADMIN')")
     public ResponseEntity<ServiceRequestResponse> updateRequestStatus(
             @PathVariable Long id,
-            @Valid @RequestBody StatusUpdateRequest statusUpdate) {
-        log.info("REST request to update Service Request ID: {} status to: {}", id, statusUpdate.getStatus());
-        ServiceRequestResponse response = serviceRequestService.updateRequestStatus(id, statusUpdate.getStatus());
+            @Valid @RequestBody StatusUpdateRequest statusUpdate,
+            Principal principal) {
+        log.info("REST request to update Service Request ID: {} status to: {} by caller: {}", id, statusUpdate.getStatus(), principal.getName());
+        ServiceRequestResponse response = serviceRequestService.updateRequestStatus(id, statusUpdate.getStatus(), principal.getName());
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> cancelRequest(@PathVariable Long id) {
-        log.info("REST request to cancel/delete Service Request ID: {}", id);
-        serviceRequestService.cancelRequest(id);
+    public ResponseEntity<Void> cancelRequest(@PathVariable Long id, Principal principal) {
+        log.info("REST request to cancel/delete Service Request ID: {} by caller: {}", id, principal.getName());
+        serviceRequestService.cancelRequest(id, principal.getName());
         return ResponseEntity.noContent().build();
     }
 }

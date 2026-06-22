@@ -49,16 +49,16 @@ PROJECT BACKLOG (From GovTech_SSE_Backend_Assessment_Candidates.pdf)
 [✅] Task 5.5: Delete Document Information endpoint (DELETE /api/documents/{id}) for Administrators.
 
 6. Notification & Status Tracking (User Stories 4.1 - 4.4)
-[ ] Task 6.1: Auto-generate Notification record when a service request status changes (unread by default).
-[ ] Task 6.2: View My Notifications endpoint (GET /api/notifications/my) for Citizens.
-[ ] Task 6.3: Mark Notification as Read endpoint (PATCH /api/notifications/{id}/read) for Citizens.
-[ ] Task 6.4: View Service Request Status History endpoint (GET /api/service-requests/{id}/history) for Service Agents to track state transitions.
+[✅] Task 6.1: Auto-generate Notification record when a service request status changes (unread by default).
+[✅] Task 6.2: View My Notifications endpoint (GET /api/notifications/my) for Citizens.
+[✅] Task 6.3: Mark Notification as Read endpoint (PATCH /api/notifications/{id}/read) for Citizens.
+[✅] Task 6.4: View Service Request Status History endpoint (GET /api/service-requests/{id}/history) for Service Agents to track state transitions.
 
 7. Security & Role-Based Access Control
-[ ] Task 7.1: Restrict Admin-only endpoints to ADMIN role.
-[ ] Task 7.2: Restrict Service Agent endpoints to SERVICE_AGENT role.
-[ ] Task 7.3: Restrict Citizen endpoints to CITIZEN role.
-[ ] Task 7.4: Ensure unauthorized or invalid access attempts return appropriate error responses.
+[✅] Task 7.1: Restrict Admin-only endpoints to ADMIN role.
+[✅] Task 7.2: Restrict Service Agent endpoints to SERVICE_AGENT role.
+[✅] Task 7.3: Restrict Citizen endpoints to CITIZEN role.
+[✅] Task 7.4: Ensure unauthorized or invalid access attempts return appropriate error responses.
 
 8. Non-Functional, Testing & Deliverables
 [ ] Task 8.1: Implement Unit and/or Integration tests for at least one service component.
