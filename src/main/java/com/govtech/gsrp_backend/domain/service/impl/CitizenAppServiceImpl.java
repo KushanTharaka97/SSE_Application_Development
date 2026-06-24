@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -60,26 +61,32 @@ public class CitizenAppServiceImpl implements ICitizenAppService {
         citizen = citizenRepository.save(citizen);
         log.info("Citizen profile created successfully with ID: {}", citizen.getId());
 
-        // 2. Auto-create User account with CITIZEN role
-        // Use NIC as username and NIC as default password
-        if (userRepository.existsByUsername(citizen.getNic())) {
-            log.warn("User account creation failed: Username {} is already taken", citizen.getNic());
-            throw new BusinessException("User account with this NIC/Username already exists");
-        }
-        if (userRepository.existsByEmail(citizen.getEmail())) {
-            log.warn("User account creation failed: Email {} is already in use", citizen.getEmail());
-            throw new BusinessException("User account with this Email already exists");
-        }
+        // 2. Link an existing user account when public registration already created one.
+        // Otherwise auto-create a NIC-based citizen account.
+        Optional<User> existingUserOpt = userRepository.findByEmail(citizen.getEmail());
+        if (existingUserOpt.isPresent()) {
+            User user = existingUserOpt.get();
+            Set<Role> roles = new HashSet<>(Optional.ofNullable(user.getRoles()).orElseGet(Collections::emptySet));
+            roles.add(Role.CITIZEN);
+            user.setRoles(roles);
+            userRepository.save(user);
+            log.info("Existing user account linked to Citizen profile via email: {}", citizen.getEmail());
+        } else {
+            if (userRepository.existsByUsername(citizen.getNic())) {
+                log.warn("User account creation failed: Username {} is already taken", citizen.getNic());
+                throw new BusinessException("User account with this NIC/Username already exists");
+            }
 
-        User user = User.builder()
-                .username(citizen.getNic())
-                .email(citizen.getEmail())
-                .password(passwordEncoder.encode(citizen.getNic()))
-                .roles(new HashSet<>(Collections.singletonList(Role.CITIZEN)))
-                .build();
+            User user = User.builder()
+                    .username(citizen.getNic())
+                    .email(citizen.getEmail())
+                    .password(passwordEncoder.encode(citizen.getNic()))
+                    .roles(new HashSet<>(Collections.singletonList(Role.CITIZEN)))
+                    .build();
 
-        userRepository.save(user);
-        log.info("User account auto-created successfully for Citizen: {}", citizen.getNic());
+            userRepository.save(user);
+            log.info("User account auto-created successfully for Citizen: {}", citizen.getNic());
+        }
 
         return mapToResponse(citizen);
     }
@@ -148,17 +155,16 @@ public class CitizenAppServiceImpl implements ICitizenAppService {
         log.info("Citizen profile updated successfully for ID: {}", id);
 
         // Sync with corresponding User entity
-        Optional<User> userOpt = userRepository.findByUsername(oldNic);
+        Optional<User> userOpt = findLinkedUser(oldNic, oldEmail);
         if (userOpt.isPresent()) {
             User user = userOpt.get();
-            user.setUsername(citizen.getNic());
             user.setEmail(citizen.getEmail());
-            // Sync password if NIC changed (since NIC is the default password)
-            if (!oldNic.equals(citizen.getNic())) {
+            if (oldNic.equals(user.getUsername())) {
+                user.setUsername(citizen.getNic());
                 user.setPassword(passwordEncoder.encode(citizen.getNic()));
             }
             userRepository.save(user);
-            log.info("Sync completed: User credentials updated for username/NIC: {}", citizen.getNic());
+            log.info("Sync completed: User credentials updated for citizen ID: {}", citizen.getId());
         }
 
         return mapToResponse(citizen);
@@ -183,11 +189,16 @@ public class CitizenAppServiceImpl implements ICitizenAppService {
         // Optionally disable matching user credentials by changing roles or deleting user?
         // Since we don't have active/enabled flag in User, we can delete the User record
         // to prevent inactive citizens from logging in.
-        Optional<User> userOpt = userRepository.findByUsername(citizen.getNic());
+        Optional<User> userOpt = findLinkedUser(citizen.getNic(), citizen.getEmail());
         userOpt.ifPresent(user -> {
             userRepository.delete(user);
             log.info("Corresponding User account deleted for deactivated Citizen NIC: {}", citizen.getNic());
         });
+    }
+
+    private Optional<User> findLinkedUser(String nic, String email) {
+        return userRepository.findByUsername(nic)
+                .or(() -> userRepository.findByEmail(email));
     }
 
     private CitizenResponse mapToResponse(Citizen citizen) {

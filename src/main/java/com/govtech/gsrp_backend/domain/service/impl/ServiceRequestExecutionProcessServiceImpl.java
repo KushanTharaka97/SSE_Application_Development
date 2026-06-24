@@ -28,7 +28,9 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -56,9 +58,7 @@ public class ServiceRequestExecutionProcessServiceImpl implements ServiceRequest
             citizen = citizenRepository.findById(submitDTO.getCitizenId())
                     .orElseThrow(() -> new BusinessException("Citizen profile not found with ID: " + submitDTO.getCitizenId()));
         } else {
-            // Find Citizen by authenticated user's username (which is the citizen's NIC)
-            citizen = citizenRepository.findByNic(currentUsername)
-                    .orElseThrow(() -> new BusinessException("Citizen profile not found for user: " + currentUsername + ". Please contact Administrator."));
+            citizen = resolveCitizenForUser(currentUsername);
         }
 
         ServiceRequest request = ServiceRequest.builder()
@@ -80,11 +80,12 @@ public class ServiceRequestExecutionProcessServiceImpl implements ServiceRequest
     @Override
     public Page<ServiceRequestResponse> getMyRequests(String currentUsername, int page, int size) {
         log.info("Retrieving service requests for logged-in user: {}", currentUsername);
-        Citizen citizen = citizenRepository.findByNic(currentUsername)
-                .orElseThrow(() -> new BusinessException("Citizen profile not found."));
+        Citizen citizen = resolveCitizenForUser(currentUsername);
 
         Pageable pageable = PageRequest.of(page, size);
         Page<ServiceRequest> requestPage = serviceRequestRepository.findByCitizenReferenceId(citizen.getId(), pageable);
+        log.info("Retrieved {} service requests for citizen ID {} with status summary: {}",
+                requestPage.getNumberOfElements(), citizen.getId(), summarizeStatuses(requestPage.getContent()));
         return requestPage.map(this::mapToResponse);
     }
 
@@ -102,14 +103,16 @@ public class ServiceRequestExecutionProcessServiceImpl implements ServiceRequest
         boolean isStaff = currentUser.getRoles().contains(Role.ADMIN) || currentUser.getRoles().contains(Role.SERVICE_AGENT);
 
         if (isCitizen && !isStaff) {
-            Citizen citizen = citizenRepository.findByNic(currentUsername)
-                    .orElseThrow(() -> new BusinessException("Citizen profile not found."));
+            Citizen citizen = resolveCitizenForUser(currentUsername);
             if (!request.getCitizenReference().getId().equals(citizen.getId())) {
                 log.warn("Access Denied: Citizen {} attempted to view Service Request {} belonging to Citizen {}", 
                         citizen.getId(), id, request.getCitizenReference().getId());
                 throw new AccessDeniedException("You cannot view other citizens' requests.");
             }
         }
+
+        log.info("Service request ID {} currently has status {} for citizen ID {}",
+                request.getId(), request.getStatus(), request.getCitizenReference().getId());
 
         return mapToResponse(request);
     }
@@ -120,6 +123,8 @@ public class ServiceRequestExecutionProcessServiceImpl implements ServiceRequest
                 citizenId, status, serviceType, page, size);
         Pageable pageable = PageRequest.of(page, size);
         Page<ServiceRequest> requestPage = serviceRequestRepository.findByFilters(citizenId, status, serviceType, pageable);
+        log.info("Retrieved {} service requests for filters with status summary: {}",
+                requestPage.getNumberOfElements(), summarizeStatuses(requestPage.getContent()));
         return requestPage.map(this::mapToResponse);
     }
 
@@ -147,12 +152,13 @@ public class ServiceRequestExecutionProcessServiceImpl implements ServiceRequest
 
         RequestStatus previousStatus = request.getStatus();
         if (previousStatus == status) {
+            log.info("Service request ID {} already has status {}. No status change applied.", id, status);
             return mapToResponse(request);
         }
 
         request.setStatus(status);
         request = serviceRequestRepository.save(request);
-        log.info("Service request ID {} status updated to {}.", id, status);
+        log.info("Service request ID {} status updated from {} to {}.", id, previousStatus, status);
 
         createNotification(request, "Your Service Request ID " + request.getId() + " status has been updated to " + status + ".");
         createStatusHistory(request, previousStatus, status, currentUsername);
@@ -169,12 +175,13 @@ public class ServiceRequestExecutionProcessServiceImpl implements ServiceRequest
 
         RequestStatus previousStatus = request.getStatus();
         if (previousStatus == RequestStatus.CANCELLED) {
+            log.info("Service request ID {} is already in status {}. No cancellation update applied.", id, previousStatus);
             return;
         }
 
         request.setStatus(RequestStatus.CANCELLED);
         serviceRequestRepository.save(request);
-        log.info("Service request ID {} marked as CANCELLED.", id);
+        log.info("Service request ID {} status updated from {} to {}.", id, previousStatus, RequestStatus.CANCELLED);
 
         createNotification(request, "Your Service Request ID " + request.getId() + " has been cancelled by the Administrator.");
         createStatusHistory(request, previousStatus, RequestStatus.CANCELLED, currentUsername);
@@ -219,6 +226,16 @@ public class ServiceRequestExecutionProcessServiceImpl implements ServiceRequest
                 .build();
     }
 
+    private Citizen resolveCitizenForUser(String currentUsername) {
+        User currentUser = userRepository.findByUsername(currentUsername)
+                .orElseThrow(() -> new BusinessException("Authenticated user details not found."));
+
+        return citizenRepository.findByNic(currentUsername)
+                .or(() -> citizenRepository.findByEmail(currentUser.getEmail()))
+                .orElseThrow(() -> new BusinessException(
+                        "Citizen profile not found for user: " + currentUsername + ". Please contact Administrator."));
+    }
+
     private void createNotification(ServiceRequest request, String message) {
         Notification notification = Notification.builder()
                 .citizen(request.getCitizenReference())
@@ -239,5 +256,18 @@ public class ServiceRequestExecutionProcessServiceImpl implements ServiceRequest
                 .build();
         serviceRequestStatusHistoryRepository.save(history);
         log.info("Status history recorded for service request ID {} from {} to {} by {}", request.getId(), previousStatus, newStatus, changedBy);
+    }
+
+    private String summarizeStatuses(List<ServiceRequest> requests) {
+        if (requests.isEmpty()) {
+            return "{}";
+        }
+
+        Map<RequestStatus, Long> statusCounts = new EnumMap<>(RequestStatus.class);
+        for (ServiceRequest request : requests) {
+            statusCounts.merge(request.getStatus(), 1L, Long::sum);
+        }
+
+        return statusCounts.toString();
     }
 }

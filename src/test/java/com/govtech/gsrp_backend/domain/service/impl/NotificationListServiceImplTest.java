@@ -5,11 +5,14 @@ import com.govtech.gsrp_backend.application.exception.BusinessException;
 import com.govtech.gsrp_backend.domain.entity.Citizen;
 import com.govtech.gsrp_backend.domain.entity.Notification;
 import com.govtech.gsrp_backend.domain.entity.ServiceRequest;
+import com.govtech.gsrp_backend.domain.entity.User;
 import com.govtech.gsrp_backend.domain.enums.NotificationStatus;
 import com.govtech.gsrp_backend.domain.enums.RequestStatus;
+import com.govtech.gsrp_backend.domain.enums.Role;
 import com.govtech.gsrp_backend.domain.enums.ServiceType;
 import com.govtech.gsrp_backend.external.repository.CitizenRepository;
 import com.govtech.gsrp_backend.external.repository.NotificationRepository;
+import com.govtech.gsrp_backend.external.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,6 +37,9 @@ class NotificationListServiceImplTest {
 
     @Mock
     private CitizenRepository citizenRepository;
+
+    @Mock
+    private UserRepository userRepository;
 
     @InjectMocks
     private NotificationListServiceImpl notificationListService;
@@ -55,7 +62,13 @@ class NotificationListServiceImplTest {
                 .status(NotificationStatus.UNREAD)
                 .createdDate(LocalDateTime.of(2026, 6, 21, 10, 0))
                 .build();
+        User user = User.builder()
+                .username("971234567V")
+                .email("citizen@example.com")
+                .roles(Collections.singleton(Role.CITIZEN))
+                .build();
 
+        when(userRepository.findByUsername("971234567V")).thenReturn(Optional.of(user));
         when(citizenRepository.findByNic("971234567V")).thenReturn(Optional.of(citizen));
         when(notificationRepository.findByCitizenIdOrderByCreatedDateDesc(1L)).thenReturn(List.of(notification));
 
@@ -85,7 +98,13 @@ class NotificationListServiceImplTest {
                 .status(NotificationStatus.UNREAD)
                 .createdDate(LocalDateTime.of(2026, 6, 21, 11, 0))
                 .build();
+        User user = User.builder()
+                .username("971234567V")
+                .email("citizen@example.com")
+                .roles(Collections.singleton(Role.CITIZEN))
+                .build();
 
+        when(userRepository.findByUsername("971234567V")).thenReturn(Optional.of(user));
         when(citizenRepository.findByNic("971234567V")).thenReturn(Optional.of(citizen));
         when(notificationRepository.findByIdAndCitizenId(200L, 1L)).thenReturn(Optional.of(notification));
         when(notificationRepository.save(notification)).thenReturn(notification);
@@ -98,7 +117,15 @@ class NotificationListServiceImplTest {
 
     @Test
     void markNotificationAsRead_throwsWhenCitizenProfileMissing() {
+        User user = User.builder()
+                .username("missing")
+                .email("missing@example.com")
+                .roles(Collections.singleton(Role.CITIZEN))
+                .build();
+
+        when(userRepository.findByUsername("missing")).thenReturn(Optional.of(user));
         when(citizenRepository.findByNic("missing")).thenReturn(Optional.empty());
+        when(citizenRepository.findByEmail("missing@example.com")).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> notificationListService.markNotificationAsRead(1L, "missing"))
                 .isInstanceOf(BusinessException.class)

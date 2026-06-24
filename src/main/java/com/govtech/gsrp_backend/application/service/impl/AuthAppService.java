@@ -7,8 +7,11 @@ import com.govtech.gsrp_backend.application.dto.SignupRequest;
 import com.govtech.gsrp_backend.application.exception.BusinessException;
 import com.govtech.gsrp_backend.application.security.JwtUtils;
 import com.govtech.gsrp_backend.application.service.IAuthAppService;
+import com.govtech.gsrp_backend.domain.entity.Citizen;
 import com.govtech.gsrp_backend.domain.entity.User;
+import com.govtech.gsrp_backend.domain.enums.CitizenStatus;
 import com.govtech.gsrp_backend.domain.enums.Role;
+import com.govtech.gsrp_backend.external.repository.CitizenRepository;
 import com.govtech.gsrp_backend.external.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +23,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.HashSet;
 import java.util.List;
@@ -32,6 +36,7 @@ import java.util.stream.Collectors;
 public class AuthAppService implements IAuthAppService {
 
     private final AuthenticationManager authenticationManager;
+    private final CitizenRepository citizenRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder encoder;
     private final JwtUtils jwtUtils;
@@ -69,10 +74,23 @@ public class AuthAppService implements IAuthAppService {
     @Override
     @Transactional
     public MessageResponse registerUser(SignupRequest signUpRequest) {
-        log.info("Attempting to register new user: {}", signUpRequest.getUsername());
+        String citizenNic = normalizePublicNic(signUpRequest);
+        log.info("Attempting to register new citizen account with NIC: {}", citizenNic);
 
-        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-            log.warn("Registration failed: Username {} is already taken", signUpRequest.getUsername());
+        validatePublicCitizenRegistration(signUpRequest, citizenNic);
+
+        if (citizenRepository.existsByNic(citizenNic)) {
+            log.warn("Registration failed: Citizen NIC {} is already in use", citizenNic);
+            throw new BusinessException("Error: Citizen NIC is already in use!");
+        }
+
+        if (citizenRepository.existsByEmail(signUpRequest.getEmail())) {
+            log.warn("Registration failed: Citizen email {} is already in use", signUpRequest.getEmail());
+            throw new BusinessException("Error: Citizen email is already in use!");
+        }
+
+        if (userRepository.existsByUsername(citizenNic)) {
+            log.warn("Registration failed: Username {} is already taken", citizenNic);
             throw new BusinessException("Error: Username is already taken!");
         }
 
@@ -81,10 +99,19 @@ public class AuthAppService implements IAuthAppService {
             throw new BusinessException("Error: Email is already in use!");
         }
 
-        // Create new user's account
+        Citizen citizen = Citizen.builder()
+                .name(signUpRequest.getName().trim())
+                .nic(citizenNic)
+                .email(signUpRequest.getEmail().trim())
+                .mobile(signUpRequest.getMobile().trim())
+                .address(signUpRequest.getAddress().trim())
+                .status(CitizenStatus.ACTIVE)
+                .build();
+        citizenRepository.save(citizen);
+
         User user = User.builder()
-                .username(signUpRequest.getUsername())
-                .email(signUpRequest.getEmail())
+                .username(citizenNic)
+                .email(signUpRequest.getEmail().trim())
                 .password(encoder.encode(signUpRequest.getPassword()))
                 .build();
 
@@ -94,8 +121,8 @@ public class AuthAppService implements IAuthAppService {
         user.setRoles(roles);
         userRepository.save(user);
 
-        log.info("User {} registered successfully with roles: {}", user.getUsername(), roles);
-        return new MessageResponse("User registered successfully!");
+        log.info("Citizen account {} registered successfully with roles: {}", user.getUsername(), roles);
+        return new MessageResponse("Citizen account registered successfully. Sign in with your NIC and password.");
     }
 
     @Override
@@ -156,5 +183,30 @@ public class AuthAppService implements IAuthAppService {
                 user.getUsername(),
                 user.getEmail(),
                 roles);
+    }
+
+    private void validatePublicCitizenRegistration(SignupRequest signUpRequest, String citizenNic) {
+        if (!StringUtils.hasText(signUpRequest.getName())) {
+            throw new BusinessException("Error: Name is required for citizen registration.");
+        }
+        if (!StringUtils.hasText(citizenNic)) {
+            throw new BusinessException("Error: NIC is required for citizen registration.");
+        }
+        if (!StringUtils.hasText(signUpRequest.getMobile())) {
+            throw new BusinessException("Error: Mobile number is required for citizen registration.");
+        }
+        if (!StringUtils.hasText(signUpRequest.getAddress())) {
+            throw new BusinessException("Error: Address is required for citizen registration.");
+        }
+    }
+
+    private String normalizePublicNic(SignupRequest signUpRequest) {
+        if (StringUtils.hasText(signUpRequest.getNic())) {
+            return signUpRequest.getNic().trim();
+        }
+        if (StringUtils.hasText(signUpRequest.getUsername())) {
+            return signUpRequest.getUsername().trim();
+        }
+        return null;
     }
 }

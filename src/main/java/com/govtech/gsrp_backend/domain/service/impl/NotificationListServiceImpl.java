@@ -4,10 +4,12 @@ import com.govtech.gsrp_backend.application.dto.NotificationResponse;
 import com.govtech.gsrp_backend.application.exception.BusinessException;
 import com.govtech.gsrp_backend.domain.entity.Citizen;
 import com.govtech.gsrp_backend.domain.entity.Notification;
+import com.govtech.gsrp_backend.domain.entity.User;
 import com.govtech.gsrp_backend.domain.enums.NotificationStatus;
 import com.govtech.gsrp_backend.domain.service.NotificationListService;
 import com.govtech.gsrp_backend.external.repository.CitizenRepository;
 import com.govtech.gsrp_backend.external.repository.NotificationRepository;
+import com.govtech.gsrp_backend.external.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,14 +24,14 @@ public class NotificationListServiceImpl implements NotificationListService {
 
     private final NotificationRepository notificationRepository;
     private final CitizenRepository citizenRepository;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional(readOnly = true)
     public List<NotificationResponse> getMyNotifications(String currentUsername) {
         log.info("Retrieving notifications for citizen user: {}", currentUsername);
 
-        Citizen citizen = citizenRepository.findByNic(currentUsername)
-                .orElseThrow(() -> new BusinessException("Citizen profile not found for user: " + currentUsername));
+        Citizen citizen = resolveCitizenForUser(currentUsername);
 
         return notificationRepository.findByCitizenIdOrderByCreatedDateDesc(citizen.getId())
                 .stream()
@@ -42,8 +44,7 @@ public class NotificationListServiceImpl implements NotificationListService {
     public NotificationResponse markNotificationAsRead(Long notificationId, String currentUsername) {
         log.info("Marking notification ID: {} as read for citizen user: {}", notificationId, currentUsername);
 
-        Citizen citizen = citizenRepository.findByNic(currentUsername)
-                .orElseThrow(() -> new BusinessException("Citizen profile not found for user: " + currentUsername));
+        Citizen citizen = resolveCitizenForUser(currentUsername);
 
         Notification notification = notificationRepository.findByIdAndCitizenId(notificationId, citizen.getId())
                 .orElseThrow(() -> new BusinessException("Notification not found for ID: " + notificationId));
@@ -70,5 +71,14 @@ public class NotificationListServiceImpl implements NotificationListService {
                 .status(notification.getStatus())
                 .createdDate(notification.getCreatedDate())
                 .build();
+    }
+
+    private Citizen resolveCitizenForUser(String currentUsername) {
+        User currentUser = userRepository.findByUsername(currentUsername)
+                .orElseThrow(() -> new BusinessException("Authenticated user details not found."));
+
+        return citizenRepository.findByNic(currentUsername)
+                .or(() -> citizenRepository.findByEmail(currentUser.getEmail()))
+                .orElseThrow(() -> new BusinessException("Citizen profile not found for user: " + currentUsername));
     }
 }
