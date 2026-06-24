@@ -63,10 +63,10 @@ public class ServiceRequestController {
     }
 
     @GetMapping("/{id}/documents")
-    @PreAuthorize("hasRole('SERVICE_AGENT')")
-    public ResponseEntity<ApiSuccessResponse<List<DocumentResponse>>> getRequestDocuments(@PathVariable Long id) {
+    @PreAuthorize("hasAnyRole('CITIZEN', 'SERVICE_AGENT', 'ADMIN')")
+    public ResponseEntity<ApiSuccessResponse<List<DocumentResponse>>> getRequestDocuments(@PathVariable Long id, Principal principal) {
         log.info("REST request to get documents for service request ID: {}", id);
-        List<DocumentResponse> response = documentExecutionService.getDocumentsByServiceRequestId(id);
+        List<DocumentResponse> response = documentExecutionService.getDocumentsByServiceRequestId(id, principal.getName());
         return ApiResponseFactory.ok("Supporting documents retrieved successfully.", response);
     }
 

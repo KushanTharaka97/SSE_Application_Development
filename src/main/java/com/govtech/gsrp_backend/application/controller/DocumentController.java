@@ -3,6 +3,7 @@ package com.govtech.gsrp_backend.application.controller;
 import com.govtech.gsrp_backend.application.dto.ApiResponseFactory;
 import com.govtech.gsrp_backend.application.dto.ApiSuccessResponse;
 import com.govtech.gsrp_backend.application.dto.DocumentCreateRequest;
+import com.govtech.gsrp_backend.application.dto.DocumentFileResponse;
 import com.govtech.gsrp_backend.application.dto.DocumentResponse;
 import com.govtech.gsrp_backend.application.dto.DocumentUpdateRequest;
 import com.govtech.gsrp_backend.application.dto.DocumentVerificationStatusUpdateRequest;
@@ -13,12 +14,16 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 
 @Slf4j
@@ -52,11 +57,28 @@ public class DocumentController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('SERVICE_AGENT')")
-    public ResponseEntity<ApiSuccessResponse<DocumentResponse>> getDocumentById(@PathVariable Long id) {
+    @PreAuthorize("hasAnyRole('CITIZEN', 'SERVICE_AGENT', 'ADMIN')")
+    public ResponseEntity<ApiSuccessResponse<DocumentResponse>> getDocumentById(@PathVariable Long id, Principal principal) {
         log.info("REST request to get document metadata ID: {}", id);
-        DocumentResponse response = documentExecutionService.getDocumentById(id);
+        DocumentResponse response = documentExecutionService.getDocumentById(id, principal.getName());
         return ApiResponseFactory.ok("Supporting document retrieved successfully.", response);
+    }
+
+    @GetMapping("/{id}/file")
+    @PreAuthorize("hasAnyRole('CITIZEN', 'SERVICE_AGENT', 'ADMIN')")
+    public ResponseEntity<Resource> getDocumentFile(@PathVariable Long id, Principal principal) {
+        log.info("REST request to stream document file ID: {}", id);
+
+        DocumentFileResponse response = documentExecutionService.getDocumentFile(id, principal.getName());
+        String contentDisposition = ContentDisposition.inline()
+                .filename(response.getFileName(), StandardCharsets.UTF_8)
+                .build()
+                .toString();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
+                .contentType(response.getMediaType())
+                .body(response.getResource());
     }
 
     @PutMapping("/{id}")

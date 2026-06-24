@@ -89,7 +89,7 @@ public class FileStorageService {
         if (relativeFilename == null || relativeFilename.isBlank()) {
             return;
         }
-        Path filePath = uploadPath.resolve(relativeFilename).normalize();
+        Path filePath = resolveFilePath(relativeFilename);
         try {
             boolean deleted = Files.deleteIfExists(filePath);
             if (deleted) {
@@ -109,6 +109,15 @@ public class FileStorageService {
      * @return resolved absolute {@link Path}
      */
     public Path resolveFilePath(String relativeFilename) {
-        return uploadPath.resolve(relativeFilename).normalize();
+        if (relativeFilename == null || relativeFilename.isBlank()) {
+            throw new BusinessException("Document file reference is missing.");
+        }
+
+        Path resolvedPath = uploadPath.resolve(relativeFilename).normalize();
+        if (!resolvedPath.startsWith(uploadPath)) {
+            throw new BusinessException("Document file reference is invalid.");
+        }
+
+        return resolvedPath;
     }
 }

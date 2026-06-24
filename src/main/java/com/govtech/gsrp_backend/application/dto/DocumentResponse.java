@@ -20,6 +20,7 @@ public class DocumentResponse {
     private ServiceType serviceType;
     private DocumentType type;
     private String name;
+    private String fileName;
     private String documentReference;
     private VerificationStatus verificationStatus;
 }

@@ -1,6 +1,7 @@
 package com.govtech.gsrp_backend.domain.service;
 
 import com.govtech.gsrp_backend.application.dto.DocumentCreateRequest;
+import com.govtech.gsrp_backend.application.dto.DocumentFileResponse;
 import com.govtech.gsrp_backend.application.dto.DocumentResponse;
 import com.govtech.gsrp_backend.application.dto.DocumentUpdateRequest;
 import com.govtech.gsrp_backend.domain.enums.VerificationStatus;
@@ -28,9 +29,11 @@ public interface DocumentExecutionService {
      */
     DocumentResponse createDocument(DocumentCreateRequest request, MultipartFile file, String currentUsername);
 
-    DocumentResponse getDocumentById(Long id);
+    DocumentResponse getDocumentById(Long id, String currentUsername);
 
-    List<DocumentResponse> getDocumentsByServiceRequestId(Long serviceRequestId);
+    List<DocumentResponse> getDocumentsByServiceRequestId(Long serviceRequestId, String currentUsername);
+
+    DocumentFileResponse getDocumentFile(Long id, String currentUsername);
 
     DocumentResponse updateDocument(Long id, DocumentUpdateRequest request);
 
